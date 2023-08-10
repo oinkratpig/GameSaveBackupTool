@@ -127,6 +127,7 @@
             Controls.Add(labelDirectory);
             Controls.Add(textBoxSaveDirectory);
             Controls.Add(buttonBrowseSaveDirectory);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FormAddGame";
             Text = "Add Game";

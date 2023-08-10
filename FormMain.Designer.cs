@@ -155,6 +155,7 @@
             Controls.Add(buttonAddGame);
             Controls.Add(labelGame);
             Controls.Add(comboBoxGames);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FormMain";
             Text = "Save Backup Tool";
