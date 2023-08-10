@@ -12,7 +12,7 @@ namespace GameSaveBackupTool
     public static class ProgramSave
     {
         private static readonly string _programSaveName = "backups.txt";
-        private static readonly string _programSavePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\backups.txt";
+        private static readonly string _programSavePath = GetLocalPath() + @"backups.txt";
 
         public static void Init()
         {
@@ -28,6 +28,12 @@ namespace GameSaveBackupTool
                 ReadProgramSave();
 
         } // end Init
+
+        public static string GetLocalPath()
+        {
+            return System.AppContext.BaseDirectory;
+
+        } // end GetLocalPath
 
         public static void Save()
         {

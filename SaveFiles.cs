@@ -29,7 +29,7 @@ namespace GameSaveBackupTool
 
         public static string GetDefaultBackupDirectory()
         {
-            return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\Backups";
+            return ProgramSave.GetLocalPath() + @"Backups";
 
         } // end GetDefaultBackupDirectory
 

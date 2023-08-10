@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             comboBoxGames = new ComboBox();
             labelGame = new Label();
             buttonAddGame = new Button();
@@ -154,6 +155,7 @@
             Controls.Add(buttonAddGame);
             Controls.Add(labelGame);
             Controls.Add(comboBoxGames);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FormMain";
             Text = "Save Backup Tool";
             ResumeLayout(false);

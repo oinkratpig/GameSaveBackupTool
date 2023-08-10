@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAddGame));
             labelDirectory = new Label();
             textBoxSaveDirectory = new TextBox();
             labelFilesToBackup = new Label();
@@ -126,6 +127,7 @@
             Controls.Add(labelDirectory);
             Controls.Add(textBoxSaveDirectory);
             Controls.Add(buttonBrowseSaveDirectory);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FormAddGame";
             Text = "Add Game";
             ResumeLayout(false);
