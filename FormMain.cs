@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -20,6 +22,13 @@ namespace GameSaveBackupTool
         {
             InitializeComponent();
             Saves = new List<SaveFiles>();
+
+            // Load program save file
+            SaveFiles.BackupDirectory = SaveFiles.GetDefaultBackupDirectory();
+            ProgramSave.Init();
+            textBoxDirectory.Text = SaveFiles.BackupDirectory;
+            ProgramSave.Save();
+            OnGameAdded(this, EventArgs.Empty);
 
         } // end constructor
 
@@ -87,6 +96,36 @@ namespace GameSaveBackupTool
             }
 
         } // end buttonBackup_Click
+
+        private void buttonOpenBackups_Click(object sender, EventArgs e)
+        {
+            if (SaveFiles.BackupDirectory == null) return;
+            Directory.CreateDirectory(SaveFiles.BackupDirectory);
+            Process.Start("explorer.exe", SaveFiles.BackupDirectory);
+
+        } // end buttonOpenBackups_Click
+
+        private void buttonResetDirectory_Click(object sender, EventArgs e)
+        {
+            SaveFiles.BackupDirectory = SaveFiles.GetDefaultBackupDirectory();
+            textBoxDirectory.Text = SaveFiles.BackupDirectory;
+
+        } // end buttonResetDirectory_Click
+
+        private void buttonDeleteGame_Click(object sender, EventArgs e)
+        {
+            if (Saves == null) return;
+
+            foreach (SaveFiles save in Saves)
+                if (save.GameName == comboBoxGames.Text)
+                {
+                    Saves.Remove(save);
+                    OnGameAdded(this, EventArgs.Empty);
+                    ProgramSave.Save();
+                    break;
+                }
+
+        } // end buttonDeleteGame_Click
 
     } // end class FormMain
 

@@ -35,6 +35,9 @@
             textBoxDirectory = new TextBox();
             buttonBrowseDirectory = new Button();
             buttonBackup = new Button();
+            buttonOpenBackups = new Button();
+            buttonResetDirectory = new Button();
+            buttonDeleteGame = new Button();
             SuspendLayout();
             // 
             // comboBoxGames
@@ -96,19 +99,54 @@
             // 
             buttonBackup.BackColor = Color.MediumAquamarine;
             buttonBackup.ForeColor = SystemColors.ControlText;
-            buttonBackup.Location = new Point(108, 131);
+            buttonBackup.Location = new Point(161, 152);
             buttonBackup.Name = "buttonBackup";
-            buttonBackup.Size = new Size(75, 23);
+            buttonBackup.Size = new Size(127, 23);
             buttonBackup.TabIndex = 13;
             buttonBackup.Text = "Backup";
             buttonBackup.UseVisualStyleBackColor = false;
             buttonBackup.Click += buttonBackup_Click;
             // 
+            // buttonOpenBackups
+            // 
+            buttonOpenBackups.Location = new Point(161, 123);
+            buttonOpenBackups.Name = "buttonOpenBackups";
+            buttonOpenBackups.Size = new Size(127, 23);
+            buttonOpenBackups.TabIndex = 14;
+            buttonOpenBackups.Text = "Open Backups Folder";
+            buttonOpenBackups.UseVisualStyleBackColor = true;
+            buttonOpenBackups.Click += buttonOpenBackups_Click;
+            // 
+            // buttonResetDirectory
+            // 
+            buttonResetDirectory.BackColor = Color.Salmon;
+            buttonResetDirectory.Location = new Point(12, 152);
+            buttonResetDirectory.Name = "buttonResetDirectory";
+            buttonResetDirectory.Size = new Size(143, 23);
+            buttonResetDirectory.TabIndex = 15;
+            buttonResetDirectory.Text = "Reset Backup Directory";
+            buttonResetDirectory.UseVisualStyleBackColor = false;
+            buttonResetDirectory.Click += buttonResetDirectory_Click;
+            // 
+            // buttonDeleteGame
+            // 
+            buttonDeleteGame.BackColor = Color.Salmon;
+            buttonDeleteGame.Location = new Point(12, 123);
+            buttonDeleteGame.Name = "buttonDeleteGame";
+            buttonDeleteGame.Size = new Size(143, 23);
+            buttonDeleteGame.TabIndex = 16;
+            buttonDeleteGame.Text = "Delete Game Profile";
+            buttonDeleteGame.UseVisualStyleBackColor = false;
+            buttonDeleteGame.Click += buttonDeleteGame_Click;
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(299, 190);
+            ClientSize = new Size(299, 187);
+            Controls.Add(buttonDeleteGame);
+            Controls.Add(buttonResetDirectory);
+            Controls.Add(buttonOpenBackups);
             Controls.Add(buttonBackup);
             Controls.Add(labelDirectory);
             Controls.Add(textBoxDirectory);
@@ -117,7 +155,7 @@
             Controls.Add(labelGame);
             Controls.Add(comboBoxGames);
             Name = "FormMain";
-            Text = "Backup Tool";
+            Text = "Save Backup Tool";
             ResumeLayout(false);
             PerformLayout();
         }
@@ -131,5 +169,8 @@
         private TextBox textBoxDirectory;
         private Button buttonBrowseDirectory;
         private Button buttonBackup;
+        private Button buttonOpenBackups;
+        private Button buttonResetDirectory;
+        private Button buttonDeleteGame;
     }
 }

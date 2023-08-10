@@ -12,7 +12,7 @@ namespace GameSaveBackupTool
 {
     public partial class FormAddGame : Form
     {
-        public event EventHandler GameAdded;
+        public event EventHandler? GameAdded;
 
         private List<string> _files;
         private string? _saveDirectory;
@@ -78,15 +78,17 @@ namespace GameSaveBackupTool
                 error = "Save directory does not exist.";
 
             // Game name invalid
+            else if (string.IsNullOrWhiteSpace(textBoxGameName.Text))
+                error = "Game folder name cannot be empty";
             else
                 foreach (char ch in Path.GetInvalidFileNameChars())
                     if (textBoxGameName.Text.Contains(ch))
                         error = "Invalid game folder name";
 
             // Game name taken
-            if(FormMain.Saves != null)
-                foreach(SaveFiles save in FormMain.Saves)
-                    if(save.GameName == textBoxGameName.Text)
+            if (FormMain.Saves != null)
+                foreach (SaveFiles save in FormMain.Saves)
+                    if (save.GameName == textBoxGameName.Text)
                         error = "Game folder name already taken";
 
             // Any files invalid
@@ -107,6 +109,7 @@ namespace GameSaveBackupTool
             // No error - create new game
             FormMain.Saves.Add(new SaveFiles(_saveDirectory, textBoxGameName.Text, _files));
             GameAdded.Invoke(this, EventArgs.Empty);
+            ProgramSave.Save();
             Close();
 
         } // end buttonAddGame_Click

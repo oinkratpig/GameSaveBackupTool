@@ -88,7 +88,7 @@
             // 
             textBoxGameName.Location = new Point(12, 83);
             textBoxGameName.Name = "textBoxGameName";
-            textBoxGameName.Size = new Size(239, 23);
+            textBoxGameName.Size = new Size(221, 23);
             textBoxGameName.TabIndex = 11;
             // 
             // buttonBrowseSaveDirectory
@@ -105,9 +105,9 @@
             // 
             buttonAddGame.BackColor = Color.MediumAquamarine;
             buttonAddGame.ForeColor = SystemColors.ControlText;
-            buttonAddGame.Location = new Point(257, 82);
+            buttonAddGame.Location = new Point(239, 82);
             buttonAddGame.Name = "buttonAddGame";
-            buttonAddGame.Size = new Size(75, 23);
+            buttonAddGame.Size = new Size(93, 24);
             buttonAddGame.TabIndex = 12;
             buttonAddGame.Text = "Add Game";
             buttonAddGame.UseVisualStyleBackColor = false;

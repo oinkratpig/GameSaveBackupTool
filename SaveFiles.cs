@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,6 +27,12 @@ namespace GameSaveBackupTool
 
         } // end constructor
 
+        public static string GetDefaultBackupDirectory()
+        {
+            return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\Backups";
+
+        } // end GetDefaultBackupDirectory
+
         public void Backup()
         {
             if (BackupDirectory == null) return;
@@ -36,8 +43,7 @@ namespace GameSaveBackupTool
 
             // Zip all save files to backup directory
             string dateTime = DateTime.Now.ToString().Replace("/", "_").Replace(":", "-");
-            string milliseconds = DateTime.Now.Millisecond.ToString();
-            FileStream zipStream = File.Create(backupGameDirectory + @$"\save {dateTime} {milliseconds}.zip");
+            FileStream zipStream = File.Create(backupGameDirectory + @$"\save {dateTime}.zip");
             using (MemoryStream ms = new MemoryStream())
             {
                 using (ZipArchive zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
