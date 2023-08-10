@@ -1,0 +1,116 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace GameSaveBackupTool
+{
+    public partial class FormAddGame : Form
+    {
+        public event EventHandler GameAdded;
+
+        private List<string> _files;
+        private string? _saveDirectory;
+
+        public FormAddGame()
+        {
+            InitializeComponent();
+            FormMain.FormAddGameInstance = this;
+            Disposed += OnDispose;
+
+            _files = new List<string>();
+
+        } // end constructor
+
+        public void OnDispose(object? sender, EventArgs e)
+        {
+            FormMain.FormAddGameInstance = null;
+
+        } // end OnDispose
+
+        private void buttonBrowseSaveDirectory_Click(object sender, EventArgs e)
+        {
+            // Create file choice dialog
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                // Fake folder selection
+                dialog.ValidateNames = false;
+                dialog.CheckFileExists = false;
+                dialog.CheckPathExists = true;
+                dialog.FileName = "Select folder";
+
+                DialogResult result = dialog.ShowDialog();
+
+                // Get list of files
+                if (result == DialogResult.OK)
+                {
+                    string? directory = Path.GetDirectoryName(dialog.FileName);
+                    if (!string.IsNullOrWhiteSpace(directory) && Directory.Exists(directory))
+                    {
+                        _files.Clear();
+                        _saveDirectory = directory;
+                        textBoxSaveDirectory.Text = _saveDirectory;
+
+                        string[] files = Directory.GetFiles(_saveDirectory);
+                        foreach (string file in files)
+                            if (File.Exists(file))
+                            {
+                                _files.Add(file);
+                                listBoxFiles.Items.Add($"- {file}");
+                            }
+                    }
+                }
+            }
+
+        } // end buttonBrowseSaveDirectory_Click
+
+        private void buttonAddGame_Click(object sender, EventArgs e)
+        {
+            string? error = null;
+
+            // Invalid save directory
+            if (_saveDirectory == null || !Directory.Exists(_saveDirectory))
+                error = "Save directory does not exist.";
+
+            // Game name invalid
+            else
+                foreach (char ch in Path.GetInvalidFileNameChars())
+                    if (textBoxGameName.Text.Contains(ch))
+                        error = "Invalid game folder name";
+
+            // Game name taken
+            if(FormMain.Saves != null)
+                foreach(SaveFiles save in FormMain.Saves)
+                    if(save.GameName == textBoxGameName.Text)
+                        error = "Game folder name already taken";
+
+            // Any files invalid
+            foreach (string file in _files)
+                if (!File.Exists(file))
+                {
+                    error = "One of the save files does not exist.";
+                    break;
+                }
+
+            // Show error and stop creating game
+            if (error != null)
+            {
+                MessageBox.Show($"Error: {error}");
+                return;
+            }
+
+            // No error - create new game
+            FormMain.Saves.Add(new SaveFiles(_saveDirectory, textBoxGameName.Text, _files));
+            GameAdded.Invoke(this, EventArgs.Empty);
+            Close();
+
+        } // end buttonAddGame_Click
+
+    } // end class FormAddGame
+
+} // end namespace
