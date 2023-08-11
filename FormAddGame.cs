@@ -161,6 +161,7 @@ namespace GameSaveBackupTool
 
             // No error - create new game
             FormMain.Saves.Add(new SaveFiles(_saveDirectory, textBoxGameName.Text, _files));
+            FormMain.outputText = $"({DateTime.Now}) Added game profile \"{textBoxGameName.Text}\".";
             GameAdded.Invoke(this, EventArgs.Empty);
             ProgramSave.Save();
             Close();

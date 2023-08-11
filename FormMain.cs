@@ -18,6 +18,8 @@ namespace GameSaveBackupTool
 
         public static List<SaveFiles>? Saves { get; set; }
 
+        public static string? outputText;
+
         public FormMain()
         {
             InitializeComponent();
@@ -31,7 +33,7 @@ namespace GameSaveBackupTool
             OnGameAdded(this, EventArgs.Empty);
 
             // Set game profile if one exists
-            if(comboBoxGames.Items.Count > 0)
+            if (comboBoxGames.Items.Count > 0)
                 comboBoxGames.SelectedIndex = 0;
 
         } // end constructor
@@ -46,7 +48,19 @@ namespace GameSaveBackupTool
                 comboBoxGames.Items.Add(save.GameName);
             }
 
+            // Set game profile if one exists and one not selected
+            if (comboBoxGames.SelectedIndex == -1 && comboBoxGames.Items.Count > 0)
+                comboBoxGames.SelectedIndex = 0;
+
+            UpdateOutputTextBox();
+
         } // end OnGameAdded
+
+        public void UpdateOutputTextBox()
+        {
+            textBoxOutput.Text = outputText;
+
+        } // end UpdateOutputTextBox
 
         private void buttonAddGame_Click(object sender, EventArgs e)
         {
@@ -99,6 +113,8 @@ namespace GameSaveBackupTool
                 }
             }
 
+            UpdateOutputTextBox();
+
         } // end buttonBackup_Click
 
         private void buttonOpenBackups_Click(object sender, EventArgs e)
@@ -113,6 +129,10 @@ namespace GameSaveBackupTool
         {
             SaveFiles.BackupDirectory = SaveFiles.GetDefaultBackupDirectory();
             textBoxDirectory.Text = SaveFiles.BackupDirectory;
+            ProgramSave.Save();
+
+            outputText = $"({DateTime.Now}) Reset backup directory.";
+            UpdateOutputTextBox();
 
         } // end buttonResetDirectory_Click
 
@@ -120,14 +140,19 @@ namespace GameSaveBackupTool
         {
             if (Saves == null) return;
 
+            string gameName = comboBoxGames.Text;
+
             foreach (SaveFiles save in Saves)
-                if (save.GameName == comboBoxGames.Text)
+                if (save.GameName == gameName)
                 {
                     Saves.Remove(save);
                     OnGameAdded(this, EventArgs.Empty);
                     ProgramSave.Save();
                     break;
                 }
+
+            outputText = $"({DateTime.Now}) Deleted game profile \"{gameName}\".";
+            UpdateOutputTextBox();
 
         } // end buttonDeleteGame_Click
 

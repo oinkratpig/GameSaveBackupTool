@@ -39,6 +39,7 @@
             buttonOpenBackups = new Button();
             buttonResetDirectory = new Button();
             buttonDeleteGame = new Button();
+            textBoxOutput = new TextBox();
             SuspendLayout();
             // 
             // comboBoxGames
@@ -100,7 +101,7 @@
             // 
             buttonBackup.BackColor = Color.MediumAquamarine;
             buttonBackup.ForeColor = SystemColors.ControlText;
-            buttonBackup.Location = new Point(161, 152);
+            buttonBackup.Location = new Point(161, 241);
             buttonBackup.Name = "buttonBackup";
             buttonBackup.Size = new Size(127, 23);
             buttonBackup.TabIndex = 13;
@@ -110,7 +111,7 @@
             // 
             // buttonOpenBackups
             // 
-            buttonOpenBackups.Location = new Point(161, 123);
+            buttonOpenBackups.Location = new Point(161, 212);
             buttonOpenBackups.Name = "buttonOpenBackups";
             buttonOpenBackups.Size = new Size(127, 23);
             buttonOpenBackups.TabIndex = 14;
@@ -121,7 +122,7 @@
             // buttonResetDirectory
             // 
             buttonResetDirectory.BackColor = Color.Salmon;
-            buttonResetDirectory.Location = new Point(12, 152);
+            buttonResetDirectory.Location = new Point(12, 241);
             buttonResetDirectory.Name = "buttonResetDirectory";
             buttonResetDirectory.Size = new Size(143, 23);
             buttonResetDirectory.TabIndex = 15;
@@ -132,7 +133,7 @@
             // buttonDeleteGame
             // 
             buttonDeleteGame.BackColor = Color.Salmon;
-            buttonDeleteGame.Location = new Point(12, 123);
+            buttonDeleteGame.Location = new Point(12, 212);
             buttonDeleteGame.Name = "buttonDeleteGame";
             buttonDeleteGame.Size = new Size(143, 23);
             buttonDeleteGame.TabIndex = 16;
@@ -140,11 +141,23 @@
             buttonDeleteGame.UseVisualStyleBackColor = false;
             buttonDeleteGame.Click += buttonDeleteGame_Click;
             // 
+            // textBoxOutput
+            // 
+            textBoxOutput.Location = new Point(12, 122);
+            textBoxOutput.Multiline = true;
+            textBoxOutput.Name = "textBoxOutput";
+            textBoxOutput.ReadOnly = true;
+            textBoxOutput.ScrollBars = ScrollBars.Both;
+            textBoxOutput.Size = new Size(275, 84);
+            textBoxOutput.TabIndex = 17;
+            textBoxOutput.WordWrap = false;
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(299, 187);
+            ClientSize = new Size(299, 278);
+            Controls.Add(textBoxOutput);
             Controls.Add(buttonDeleteGame);
             Controls.Add(buttonResetDirectory);
             Controls.Add(buttonOpenBackups);
@@ -175,5 +188,6 @@
         private Button buttonOpenBackups;
         private Button buttonResetDirectory;
         private Button buttonDeleteGame;
+        private TextBox textBoxOutput;
     }
 }

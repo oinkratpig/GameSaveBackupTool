@@ -37,6 +37,9 @@ namespace GameSaveBackupTool
         {
             if (BackupDirectory == null) return;
 
+            // Output msg
+            FormMain.outputText = $"({DateTime.Now}) Backing up...";
+
             // Create backup directory if it doesn't already exist
             string backupGameDirectory = @$"{BackupDirectory}\{GameName}";
             Directory.CreateDirectory(backupGameDirectory);
@@ -49,14 +52,19 @@ namespace GameSaveBackupTool
                 using (ZipArchive zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
                 {
                     foreach (string file in FileNames)
-                        zip.CreateEntryFromFile(file, Path.GetFileName(file));
+                    {
+                        if (!File.Exists(file))
+                            FormMain.outputText += $"\r\nNo file found \"{file}\".";
+                        else
+                            zip.CreateEntryFromFile(file, Path.GetFileName(file));
+                    }
                 }
                 ms.WriteTo(zipStream);
             }
             zipStream.Close();
 
             // Done
-            MessageBox.Show($"Backed up.");
+            FormMain.outputText += "\r\nDone.";
 
         } // end Backup
 
