@@ -33,6 +33,7 @@ namespace GameSaveBackupTool
 
         } // end OnDispose
 
+        /*
         private void buttonBrowseSaveDirectory_Click(object sender, EventArgs e)
         {
             // Create file choice dialog
@@ -54,21 +55,73 @@ namespace GameSaveBackupTool
                     {
                         _files.Clear();
                         _saveDirectory = directory;
-                        textBoxSaveDirectory.Text = _saveDirectory;
+                        //textBoxSaveDirectory.Text = _saveDirectory;
 
                         string[] files = Directory.GetFiles(_saveDirectory);
                         foreach (string file in files)
                             if (File.Exists(file))
                             {
                                 _files.Add(file);
-                                listBoxFiles.Items.Add($"- {file}");
+                                listBoxFiles.Items.Add(file);
                             }
                     }
                 }
             }
 
         } // end buttonBrowseSaveDirectory_Click
+        */
 
+        /* Add files */
+        private void buttonAddFiles_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = true;
+                dialog.InitialDirectory = _saveDirectory;
+                DialogResult result = dialog.ShowDialog();
+
+                // Get list of files
+                if (result == DialogResult.OK)
+                {
+                    string[] paths = dialog.FileNames;
+                    foreach (string path in paths)
+                        if (!string.IsNullOrEmpty(path) && File.Exists(path))
+                        {
+                            _files.Add(path);
+                            // Most recent file added is default save directory
+                            _saveDirectory = Path.GetDirectoryName(path);
+                        }
+                }
+
+                UpdateFilesList();
+            }
+        } // end buttonAddFiles_Click
+
+        /* Remove file from profile */
+        private void buttonRemoveFile_Click(object sender, EventArgs e)
+        {
+            if(listBoxFiles.SelectedIndex != -1)
+            {
+                string? filePath = listBoxFiles.SelectedItem.ToString();
+                if(filePath != null)
+                {
+                    _files.Remove(filePath);
+                    UpdateFilesList();
+                }
+            }
+
+        } // end buttonRemoveFile_Click
+
+        /* Update files list */
+        private void UpdateFilesList()
+        {
+            listBoxFiles.Items.Clear();
+            foreach (string file in _files)
+                listBoxFiles.Items.Add(file);
+
+        } // end UpdateFilesList
+
+        /* Add game profile */
         private void buttonAddGame_Click(object sender, EventArgs e)
         {
             string? error = null;

@@ -29,37 +29,19 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAddGame));
-            labelDirectory = new Label();
-            textBoxSaveDirectory = new TextBox();
             labelFilesToBackup = new Label();
             listBoxFiles = new ListBox();
             labelGameName = new Label();
             textBoxGameName = new TextBox();
-            buttonBrowseSaveDirectory = new Button();
             buttonAddGame = new Button();
+            buttonRemoveFile = new Button();
+            buttonAddFiles = new Button();
             SuspendLayout();
-            // 
-            // labelDirectory
-            // 
-            labelDirectory.AutoSize = true;
-            labelDirectory.Location = new Point(12, 9);
-            labelDirectory.Name = "labelDirectory";
-            labelDirectory.Size = new Size(116, 15);
-            labelDirectory.TabIndex = 5;
-            labelDirectory.Text = "Game Save Directory";
-            // 
-            // textBoxSaveDirectory
-            // 
-            textBoxSaveDirectory.Location = new Point(12, 27);
-            textBoxSaveDirectory.Name = "textBoxSaveDirectory";
-            textBoxSaveDirectory.ReadOnly = true;
-            textBoxSaveDirectory.Size = new Size(239, 23);
-            textBoxSaveDirectory.TabIndex = 4;
             // 
             // labelFilesToBackup
             // 
             labelFilesToBackup.AutoSize = true;
-            labelFilesToBackup.Location = new Point(12, 122);
+            labelFilesToBackup.Location = new Point(12, 63);
             labelFilesToBackup.Name = "labelFilesToBackup";
             labelFilesToBackup.Size = new Size(86, 15);
             labelFilesToBackup.TabIndex = 9;
@@ -71,7 +53,7 @@
             listBoxFiles.FormattingEnabled = true;
             listBoxFiles.HorizontalScrollbar = true;
             listBoxFiles.ItemHeight = 15;
-            listBoxFiles.Location = new Point(12, 140);
+            listBoxFiles.Location = new Point(12, 81);
             listBoxFiles.Name = "listBoxFiles";
             listBoxFiles.Size = new Size(320, 139);
             listBoxFiles.TabIndex = 8;
@@ -79,7 +61,7 @@
             // labelGameName
             // 
             labelGameName.AutoSize = true;
-            labelGameName.Location = new Point(12, 65);
+            labelGameName.Location = new Point(12, 9);
             labelGameName.Name = "labelGameName";
             labelGameName.Size = new Size(151, 15);
             labelGameName.TabIndex = 10;
@@ -87,26 +69,16 @@
             // 
             // textBoxGameName
             // 
-            textBoxGameName.Location = new Point(12, 83);
+            textBoxGameName.Location = new Point(12, 27);
             textBoxGameName.Name = "textBoxGameName";
             textBoxGameName.Size = new Size(221, 23);
             textBoxGameName.TabIndex = 11;
-            // 
-            // buttonBrowseSaveDirectory
-            // 
-            buttonBrowseSaveDirectory.Location = new Point(257, 27);
-            buttonBrowseSaveDirectory.Name = "buttonBrowseSaveDirectory";
-            buttonBrowseSaveDirectory.Size = new Size(75, 23);
-            buttonBrowseSaveDirectory.TabIndex = 3;
-            buttonBrowseSaveDirectory.Text = "Browse";
-            buttonBrowseSaveDirectory.UseVisualStyleBackColor = true;
-            buttonBrowseSaveDirectory.Click += buttonBrowseSaveDirectory_Click;
             // 
             // buttonAddGame
             // 
             buttonAddGame.BackColor = Color.MediumAquamarine;
             buttonAddGame.ForeColor = SystemColors.ControlText;
-            buttonAddGame.Location = new Point(239, 82);
+            buttonAddGame.Location = new Point(239, 26);
             buttonAddGame.Name = "buttonAddGame";
             buttonAddGame.Size = new Size(93, 24);
             buttonAddGame.TabIndex = 12;
@@ -114,19 +86,38 @@
             buttonAddGame.UseVisualStyleBackColor = false;
             buttonAddGame.Click += buttonAddGame_Click;
             // 
+            // buttonRemoveFile
+            // 
+            buttonRemoveFile.Location = new Point(12, 226);
+            buttonRemoveFile.Name = "buttonRemoveFile";
+            buttonRemoveFile.Size = new Size(151, 23);
+            buttonRemoveFile.TabIndex = 14;
+            buttonRemoveFile.Text = "Remove Selected File";
+            buttonRemoveFile.UseVisualStyleBackColor = true;
+            buttonRemoveFile.Click += buttonRemoveFile_Click;
+            // 
+            // buttonAddFiles
+            // 
+            buttonAddFiles.Location = new Point(181, 226);
+            buttonAddFiles.Name = "buttonAddFiles";
+            buttonAddFiles.Size = new Size(151, 23);
+            buttonAddFiles.TabIndex = 15;
+            buttonAddFiles.Text = "Add File(s)";
+            buttonAddFiles.UseVisualStyleBackColor = true;
+            buttonAddFiles.Click += buttonAddFiles_Click;
+            // 
             // FormAddGame
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(344, 290);
+            ClientSize = new Size(344, 262);
+            Controls.Add(buttonAddFiles);
+            Controls.Add(buttonRemoveFile);
             Controls.Add(buttonAddGame);
             Controls.Add(textBoxGameName);
             Controls.Add(labelGameName);
             Controls.Add(labelFilesToBackup);
             Controls.Add(listBoxFiles);
-            Controls.Add(labelDirectory);
-            Controls.Add(textBoxSaveDirectory);
-            Controls.Add(buttonBrowseSaveDirectory);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FormAddGame";
@@ -136,14 +127,12 @@
         }
 
         #endregion
-
-        private Label labelDirectory;
-        private TextBox textBoxSaveDirectory;
         private Label labelFilesToBackup;
         private ListBox listBoxFiles;
         private Label labelGameName;
         private TextBox textBoxGameName;
-        private Button buttonBrowseSaveDirectory;
         private Button buttonAddGame;
+        private Button buttonRemoveFile;
+        private Button buttonAddFiles;
     }
 }
