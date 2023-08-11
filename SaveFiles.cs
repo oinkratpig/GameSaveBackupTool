@@ -33,20 +33,44 @@ namespace GameSaveBackupTool
 
         } // end GetDefaultBackupDirectory
 
-        public void Backup()
+        public static string GetDefaultSaveName()
+        {
+            string dateTime = DateTime.Now.ToString().Replace("/", "_").Replace(":", "-");
+            return $"save {dateTime}";
+
+        } // end GetDefaultSaveName
+
+        public void Backup(string? saveName)
         {
             if (BackupDirectory == null) return;
 
             // Output msg
             FormMain.outputText = $"({DateTime.Now}) Backing up...";
 
+            // Invalid save name
+            if (saveName != null)
+                foreach (char ch in Path.GetInvalidFileNameChars())
+                    if (saveName.Contains(ch))
+                    {
+                        FormMain.outputText += $"\r\nSave name \"{saveName}\" invalid. Using default name.";
+                        saveName = null;
+                        break;
+                    }
+
+            // Set save name
+            if (string.IsNullOrWhiteSpace(saveName))
+                saveName = GetDefaultSaveName();
+
             // Create backup directory if it doesn't already exist
             string backupGameDirectory = @$"{BackupDirectory}\{GameName}";
             Directory.CreateDirectory(backupGameDirectory);
 
+            // Save name already taken
+            if (File.Exists(backupGameDirectory + @$"\{saveName}.zip"))
+                FormMain.outputText += $"\r\nSave name \"{saveName}\" already taken. Overwriting.";
+
             // Zip all save files to backup directory
-            string dateTime = DateTime.Now.ToString().Replace("/", "_").Replace(":", "-");
-            FileStream zipStream = File.Create(backupGameDirectory + @$"\save {dateTime}.zip");
+            FileStream zipStream = File.Create(backupGameDirectory + @$"\{saveName}.zip");
             using (MemoryStream ms = new MemoryStream())
             {
                 using (ZipArchive zip = new ZipArchive(ms, ZipArchiveMode.Create, true))

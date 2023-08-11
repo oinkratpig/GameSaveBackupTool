@@ -120,6 +120,7 @@
             Controls.Add(listBoxFiles);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
+            MaximizeBox = false;
             Name = "FormAddGame";
             Text = "Add Game";
             ResumeLayout(false);

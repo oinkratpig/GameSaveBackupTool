@@ -100,10 +100,10 @@ namespace GameSaveBackupTool
         /* Remove file from profile */
         private void buttonRemoveFile_Click(object sender, EventArgs e)
         {
-            if(listBoxFiles.SelectedIndex != -1)
+            if (listBoxFiles.SelectedIndex != -1)
             {
                 string? filePath = listBoxFiles.SelectedItem.ToString();
-                if(filePath != null)
+                if (filePath != null)
                 {
                     _files.Remove(filePath);
                     UpdateFilesList();
