@@ -30,6 +30,10 @@ namespace GameSaveBackupTool
             ProgramSave.Save();
             OnGameAdded(this, EventArgs.Empty);
 
+            // Set game profile if one exists
+            if(comboBoxGames.Items.Count > 0)
+                comboBoxGames.SelectedIndex = 0;
+
         } // end constructor
 
         public void OnGameAdded(object? sender, EventArgs e)
