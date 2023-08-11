@@ -78,7 +78,7 @@ namespace GameSaveBackupTool
                     foreach (string file in FileNames)
                     {
                         if (!File.Exists(file))
-                            FormMain.outputText += $"\r\nNo file found \"{file}\".";
+                            FormMain.outputText += $"\r\nNo file found \"{file}\". Ignoring.";
                         else
                             zip.CreateEntryFromFile(file, Path.GetFileName(file));
                     }
