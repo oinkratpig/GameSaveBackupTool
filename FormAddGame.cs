@@ -16,6 +16,7 @@ namespace GameSaveBackupTool
 
         private List<string> _files;
         private string? _saveDirectory;
+        private bool _editMode;
 
         public FormAddGame()
         {
@@ -24,6 +25,25 @@ namespace GameSaveBackupTool
             Disposed += OnDispose;
 
             _files = new List<string>();
+            _editMode = false;
+
+        } // end constructor
+
+        public FormAddGame(SaveFiles game) : this()
+        {
+            _files = game.FileNames;
+            _saveDirectory = game.SaveDirectory;
+
+            textBoxGameName.Text = game.GameName;
+            textBoxGameName.Enabled = false;
+            buttonDeleteProfile.Visible = true;
+            this.Text = "Edit Game Profile";
+
+            buttonAddGame.Text = "Update Game";
+
+            _editMode = true;
+
+            UpdateFilesList();
 
         } // end constructor
 
@@ -121,10 +141,19 @@ namespace GameSaveBackupTool
 
         } // end UpdateFilesList
 
-        /* Add game profile */
+        /* Add / Edit game profile */
         private void buttonAddGame_Click(object sender, EventArgs e)
         {
             string? error = null;
+
+            // If in edit mode, remove game before adding it
+            if (_editMode && FormMain.Saves != null)
+                foreach (SaveFiles game in FormMain.Saves)
+                    if (game.GameName == textBoxGameName.Text)
+                    {
+                        FormMain.Saves.Remove(game);
+                        break;
+                    }
 
             // Invalid save directory
             if (_saveDirectory == null || !Directory.Exists(_saveDirectory))
@@ -161,12 +190,32 @@ namespace GameSaveBackupTool
 
             // No error - create new game
             FormMain.Saves.Add(new SaveFiles(_saveDirectory, textBoxGameName.Text, _files));
-            FormMain.outputText = $"({DateTime.Now}) Added game profile \"{textBoxGameName.Text}\".";
+            FormMain.outputText = $"({DateTime.Now}) {((_editMode) ? "Updated" : "Added")} game profile \"{textBoxGameName.Text}\".";
             GameAdded.Invoke(this, EventArgs.Empty);
             ProgramSave.Save();
             Close();
 
         } // end buttonAddGame_Click
+
+        /* Delete game profile */
+        private void buttonDeleteProfile_Click(object sender, EventArgs e)
+        {
+            if (!_editMode || FormMain.Saves == null)
+                return;
+
+            string gameName = textBoxGameName.Text;
+            foreach (SaveFiles save in FormMain.Saves)
+                if (save.GameName == gameName)
+                {
+                    FormMain.Saves.Remove(save);
+                    ProgramSave.Save();
+                    FormMain.outputText = $"({DateTime.Now}) Deleted game profile \"{gameName}\".";
+                    GameAdded.Invoke(this, EventArgs.Empty);
+                    Close();
+                    break;
+                }
+
+        } // end buttonDeleteProfile_Click
 
     } // end class FormAddGame
 

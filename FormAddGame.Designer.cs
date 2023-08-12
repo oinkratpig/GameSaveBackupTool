@@ -36,6 +36,7 @@
             buttonAddGame = new Button();
             buttonRemoveFile = new Button();
             buttonAddFiles = new Button();
+            buttonDeleteProfile = new Button();
             SuspendLayout();
             // 
             // labelFilesToBackup
@@ -106,11 +107,24 @@
             buttonAddFiles.UseVisualStyleBackColor = true;
             buttonAddFiles.Click += buttonAddFiles_Click;
             // 
+            // buttonDeleteProfile
+            // 
+            buttonDeleteProfile.BackColor = Color.Salmon;
+            buttonDeleteProfile.Location = new Point(239, 53);
+            buttonDeleteProfile.Name = "buttonDeleteProfile";
+            buttonDeleteProfile.Size = new Size(93, 23);
+            buttonDeleteProfile.TabIndex = 16;
+            buttonDeleteProfile.Text = "Delete Profile";
+            buttonDeleteProfile.UseVisualStyleBackColor = false;
+            buttonDeleteProfile.Visible = false;
+            buttonDeleteProfile.Click += buttonDeleteProfile_Click;
+            // 
             // FormAddGame
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(344, 262);
+            Controls.Add(buttonDeleteProfile);
             Controls.Add(buttonAddFiles);
             Controls.Add(buttonRemoveFile);
             Controls.Add(buttonAddGame);
@@ -122,7 +136,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             Name = "FormAddGame";
-            Text = "Add Game";
+            Text = "Add Game Profile";
             ResumeLayout(false);
             PerformLayout();
         }
@@ -135,5 +149,6 @@
         private Button buttonAddGame;
         private Button buttonRemoveFile;
         private Button buttonAddFiles;
+        private Button buttonDeleteProfile;
     }
 }

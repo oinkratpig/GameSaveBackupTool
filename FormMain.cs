@@ -38,6 +38,7 @@ namespace GameSaveBackupTool
 
         } // end constructor
 
+        /* Event called when new game is added */
         public void OnGameAdded(object? sender, EventArgs e)
         {
             if (Saves == null) return;
@@ -56,12 +57,14 @@ namespace GameSaveBackupTool
 
         } // end OnGameAdded
 
+        /* Update output text box */
         public void UpdateOutputTextBox()
         {
             textBoxOutput.Text = outputText;
 
         } // end UpdateOutputTextBox
 
+        /* Add new game profile */
         private void buttonAddGame_Click(object sender, EventArgs e)
         {
             if (FormAddGameInstance == null)
@@ -73,6 +76,7 @@ namespace GameSaveBackupTool
 
         } // end buttonAddGame_Click
 
+        /* Browse backup directory */
         private void buttonBrowseDirectory_Click(object sender, EventArgs e)
         {
             // Create file choice dialog
@@ -100,6 +104,7 @@ namespace GameSaveBackupTool
 
         } // end buttonBrowseDirectory_Click
 
+        /* Backup */
         private void buttonBackup_Click(object sender, EventArgs e)
         {
             if (Saves == null) return;
@@ -118,6 +123,7 @@ namespace GameSaveBackupTool
 
         } // end buttonBackup_Click
 
+        /* Open backups folder */
         private void buttonOpenBackups_Click(object sender, EventArgs e)
         {
             if (SaveFiles.BackupDirectory == null) return;
@@ -137,6 +143,8 @@ namespace GameSaveBackupTool
 
         } // end buttonResetDirectory_Click
 
+        /*
+        // Delete game
         private void buttonDeleteGame_Click(object sender, EventArgs e)
         {
             if (Saves == null) return;
@@ -156,6 +164,29 @@ namespace GameSaveBackupTool
             UpdateOutputTextBox();
 
         } // end buttonDeleteGame_Click
+        */
+
+        /* Edit game */
+        private void buttonEditGame_Click(object sender, EventArgs e)
+        {
+            if (Saves == null) return;
+
+            // Find game to edit
+            SaveFiles? game = null;
+            string gameName = comboBoxGames.Text;
+            foreach (SaveFiles save in Saves)
+                if (gameName == save.GameName)
+                    game = save;
+
+            // Open add game window
+            if (FormAddGameInstance == null && game != null)
+            {
+                FormAddGameInstance = new FormAddGame(game);
+                FormAddGameInstance.GameAdded += OnGameAdded;
+                FormAddGameInstance.Show();
+            }
+
+        } // end buttonEditGame_Click
 
     } // end class FormMain
 

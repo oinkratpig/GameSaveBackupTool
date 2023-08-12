@@ -38,10 +38,13 @@
             buttonBackup = new Button();
             buttonOpenBackups = new Button();
             buttonResetDirectory = new Button();
-            buttonDeleteGame = new Button();
             textBoxOutput = new TextBox();
             textBoxSaveName = new TextBox();
             labelSaveName = new Label();
+            buttonEditGame = new Button();
+            checkBoxSaveNumberedPrefix = new CheckBox();
+            label1 = new Label();
+            checkBoxSaveNumberedPostfix = new CheckBox();
             SuspendLayout();
             // 
             // comboBoxGames
@@ -64,7 +67,7 @@
             // 
             // buttonAddGame
             // 
-            buttonAddGame.Location = new Point(189, 27);
+            buttonAddGame.Location = new Point(230, 27);
             buttonAddGame.Name = "buttonAddGame";
             buttonAddGame.Size = new Size(99, 23);
             buttonAddGame.TabIndex = 2;
@@ -75,7 +78,7 @@
             // labelDirectory
             // 
             labelDirectory.AutoSize = true;
-            labelDirectory.Location = new Point(12, 68);
+            labelDirectory.Location = new Point(12, 53);
             labelDirectory.Name = "labelDirectory";
             labelDirectory.Size = new Size(97, 15);
             labelDirectory.TabIndex = 8;
@@ -83,15 +86,15 @@
             // 
             // textBoxDirectory
             // 
-            textBoxDirectory.Location = new Point(12, 86);
+            textBoxDirectory.Location = new Point(12, 71);
             textBoxDirectory.Name = "textBoxDirectory";
             textBoxDirectory.ReadOnly = true;
-            textBoxDirectory.Size = new Size(195, 23);
+            textBoxDirectory.Size = new Size(236, 23);
             textBoxDirectory.TabIndex = 7;
             // 
             // buttonBrowseDirectory
             // 
-            buttonBrowseDirectory.Location = new Point(213, 86);
+            buttonBrowseDirectory.Location = new Point(254, 71);
             buttonBrowseDirectory.Name = "buttonBrowseDirectory";
             buttonBrowseDirectory.Size = new Size(75, 23);
             buttonBrowseDirectory.TabIndex = 6;
@@ -103,9 +106,9 @@
             // 
             buttonBackup.BackColor = Color.MediumAquamarine;
             buttonBackup.ForeColor = SystemColors.ControlText;
-            buttonBackup.Location = new Point(215, 283);
+            buttonBackup.Location = new Point(209, 244);
             buttonBackup.Name = "buttonBackup";
-            buttonBackup.Size = new Size(73, 24);
+            buttonBackup.Size = new Size(120, 23);
             buttonBackup.TabIndex = 13;
             buttonBackup.Text = "Backup";
             buttonBackup.UseVisualStyleBackColor = false;
@@ -113,9 +116,9 @@
             // 
             // buttonOpenBackups
             // 
-            buttonOpenBackups.Location = new Point(12, 115);
+            buttonOpenBackups.Location = new Point(174, 100);
             buttonOpenBackups.Name = "buttonOpenBackups";
-            buttonOpenBackups.Size = new Size(276, 23);
+            buttonOpenBackups.Size = new Size(155, 23);
             buttonOpenBackups.TabIndex = 14;
             buttonOpenBackups.Text = "Open Backups Folder";
             buttonOpenBackups.UseVisualStyleBackColor = true;
@@ -124,39 +127,28 @@
             // buttonResetDirectory
             // 
             buttonResetDirectory.BackColor = Color.Salmon;
-            buttonResetDirectory.Location = new Point(12, 144);
+            buttonResetDirectory.Location = new Point(12, 100);
             buttonResetDirectory.Name = "buttonResetDirectory";
-            buttonResetDirectory.Size = new Size(143, 23);
+            buttonResetDirectory.Size = new Size(155, 23);
             buttonResetDirectory.TabIndex = 15;
             buttonResetDirectory.Text = "Reset Backup Directory";
             buttonResetDirectory.UseVisualStyleBackColor = false;
             buttonResetDirectory.Click += buttonResetDirectory_Click;
             // 
-            // buttonDeleteGame
-            // 
-            buttonDeleteGame.BackColor = Color.Salmon;
-            buttonDeleteGame.Location = new Point(162, 144);
-            buttonDeleteGame.Name = "buttonDeleteGame";
-            buttonDeleteGame.Size = new Size(126, 23);
-            buttonDeleteGame.TabIndex = 16;
-            buttonDeleteGame.Text = "Delete Game Profile";
-            buttonDeleteGame.UseVisualStyleBackColor = false;
-            buttonDeleteGame.Click += buttonDeleteGame_Click;
-            // 
             // textBoxOutput
             // 
-            textBoxOutput.Location = new Point(12, 173);
+            textBoxOutput.Location = new Point(12, 129);
             textBoxOutput.Multiline = true;
             textBoxOutput.Name = "textBoxOutput";
             textBoxOutput.ReadOnly = true;
             textBoxOutput.ScrollBars = ScrollBars.Both;
-            textBoxOutput.Size = new Size(276, 84);
+            textBoxOutput.Size = new Size(317, 84);
             textBoxOutput.TabIndex = 17;
             textBoxOutput.WordWrap = false;
             // 
             // textBoxSaveName
             // 
-            textBoxSaveName.Location = new Point(12, 283);
+            textBoxSaveName.Location = new Point(12, 244);
             textBoxSaveName.Name = "textBoxSaveName";
             textBoxSaveName.PlaceholderText = "save <date time>.zip";
             textBoxSaveName.Size = new Size(191, 23);
@@ -165,21 +157,63 @@
             // labelSaveName
             // 
             labelSaveName.AutoSize = true;
-            labelSaveName.Location = new Point(12, 265);
+            labelSaveName.Location = new Point(12, 226);
             labelSaveName.Name = "labelSaveName";
             labelSaveName.Size = new Size(66, 15);
             labelSaveName.TabIndex = 19;
             labelSaveName.Text = "Save Name";
             // 
+            // buttonEditGame
+            // 
+            buttonEditGame.Location = new Point(189, 27);
+            buttonEditGame.Name = "buttonEditGame";
+            buttonEditGame.Size = new Size(35, 23);
+            buttonEditGame.TabIndex = 20;
+            buttonEditGame.Text = "Edit";
+            buttonEditGame.UseVisualStyleBackColor = true;
+            buttonEditGame.Click += buttonEditGame_Click;
+            // 
+            // checkBoxSaveNumberedPrefix
+            // 
+            checkBoxSaveNumberedPrefix.AutoSize = true;
+            checkBoxSaveNumberedPrefix.Location = new Point(147, 273);
+            checkBoxSaveNumberedPrefix.Name = "checkBoxSaveNumberedPrefix";
+            checkBoxSaveNumberedPrefix.Size = new Size(60, 19);
+            checkBoxSaveNumberedPrefix.TabIndex = 21;
+            checkBoxSaveNumberedPrefix.Text = "Before";
+            checkBoxSaveNumberedPrefix.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(12, 273);
+            label1.Name = "label1";
+            label1.Size = new Size(129, 15);
+            label1.TabIndex = 22;
+            label1.Text = "Add Save File Numbers";
+            // 
+            // checkBoxSaveNumberedPostfix
+            // 
+            checkBoxSaveNumberedPostfix.AutoSize = true;
+            checkBoxSaveNumberedPostfix.Location = new Point(210, 273);
+            checkBoxSaveNumberedPostfix.Name = "checkBoxSaveNumberedPostfix";
+            checkBoxSaveNumberedPostfix.Size = new Size(52, 19);
+            checkBoxSaveNumberedPostfix.TabIndex = 23;
+            checkBoxSaveNumberedPostfix.Text = "After";
+            checkBoxSaveNumberedPostfix.UseVisualStyleBackColor = true;
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(306, 315);
+            ClientSize = new Size(340, 305);
+            Controls.Add(checkBoxSaveNumberedPostfix);
+            Controls.Add(label1);
+            Controls.Add(checkBoxSaveNumberedPrefix);
+            Controls.Add(buttonEditGame);
             Controls.Add(labelSaveName);
             Controls.Add(textBoxSaveName);
             Controls.Add(textBoxOutput);
-            Controls.Add(buttonDeleteGame);
             Controls.Add(buttonResetDirectory);
             Controls.Add(buttonOpenBackups);
             Controls.Add(buttonBackup);
@@ -209,9 +243,12 @@
         private Button buttonBackup;
         private Button buttonOpenBackups;
         private Button buttonResetDirectory;
-        private Button buttonDeleteGame;
         private TextBox textBoxOutput;
         private TextBox textBoxSaveName;
         private Label labelSaveName;
+        private Button buttonEditGame;
+        private CheckBox checkBoxSaveNumberedPrefix;
+        private Label label1;
+        private CheckBox checkBoxSaveNumberedPostfix;
     }
 }
