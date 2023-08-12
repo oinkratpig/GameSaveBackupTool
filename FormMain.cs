@@ -16,19 +16,19 @@ namespace GameSaveBackupTool
     {
         public static FormAddGame? FormAddGameInstance;
 
-        public static List<SaveFiles>? Saves { get; set; }
+        public static List<GameProfile>? Saves { get; set; }
 
         public static string? outputText;
 
         public FormMain()
         {
             InitializeComponent();
-            Saves = new List<SaveFiles>();
+            Saves = new List<GameProfile>();
 
             // Load program save file
-            SaveFiles.BackupDirectory = SaveFiles.GetDefaultBackupDirectory();
+            GameProfile.BackupDirectory = GameProfile.GetDefaultBackupDirectory();
             ProgramSave.Init();
-            textBoxDirectory.Text = SaveFiles.BackupDirectory;
+            textBoxDirectory.Text = GameProfile.BackupDirectory;
             ProgramSave.Save();
             OnGameAdded(this, EventArgs.Empty);
 
@@ -44,7 +44,7 @@ namespace GameSaveBackupTool
             if (Saves == null) return;
 
             comboBoxGames.Items.Clear();
-            foreach (SaveFiles save in Saves)
+            foreach (GameProfile save in Saves)
             {
                 comboBoxGames.Items.Add(save.GameName);
             }
@@ -96,7 +96,7 @@ namespace GameSaveBackupTool
                     string? directory = Path.GetDirectoryName(dialog.FileName);
                     if (!string.IsNullOrWhiteSpace(directory) && Directory.Exists(directory))
                     {
-                        SaveFiles.BackupDirectory = directory;
+                        GameProfile.BackupDirectory = directory;
                         textBoxDirectory.Text = directory;
                     }
                 }
@@ -109,7 +109,7 @@ namespace GameSaveBackupTool
         {
             if (Saves == null) return;
 
-            foreach (SaveFiles save in Saves)
+            foreach (GameProfile save in Saves)
             {
                 if (save.GameName == comboBoxGames.Text)
                 {
@@ -126,16 +126,16 @@ namespace GameSaveBackupTool
         /* Open backups folder */
         private void buttonOpenBackups_Click(object sender, EventArgs e)
         {
-            if (SaveFiles.BackupDirectory == null) return;
-            Directory.CreateDirectory(SaveFiles.BackupDirectory);
-            Process.Start("explorer.exe", SaveFiles.BackupDirectory);
+            if (GameProfile.BackupDirectory == null) return;
+            Directory.CreateDirectory(GameProfile.BackupDirectory);
+            Process.Start("explorer.exe", GameProfile.BackupDirectory);
 
         } // end buttonOpenBackups_Click
 
         private void buttonResetDirectory_Click(object sender, EventArgs e)
         {
-            SaveFiles.BackupDirectory = SaveFiles.GetDefaultBackupDirectory();
-            textBoxDirectory.Text = SaveFiles.BackupDirectory;
+            GameProfile.BackupDirectory = GameProfile.GetDefaultBackupDirectory();
+            textBoxDirectory.Text = GameProfile.BackupDirectory;
             ProgramSave.Save();
 
             outputText = $"({DateTime.Now}) Reset backup directory.";
@@ -172,9 +172,9 @@ namespace GameSaveBackupTool
             if (Saves == null) return;
 
             // Find game to edit
-            SaveFiles? game = null;
+            GameProfile? game = null;
             string gameName = comboBoxGames.Text;
-            foreach (SaveFiles save in Saves)
+            foreach (GameProfile save in Saves)
                 if (gameName == save.GameName)
                     game = save;
 

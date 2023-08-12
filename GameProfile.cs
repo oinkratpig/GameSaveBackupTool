@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GameSaveBackupTool
 {
-    public class SaveFiles
+    public class GameProfile
     {
         public static string? BackupDirectory;
 
@@ -20,7 +20,7 @@ namespace GameSaveBackupTool
 
         public List<string> FileNames { get; private set; }
 
-        public SaveFiles(string directory, string gameName, List<string> fileNames)
+        public GameProfile(string directory, string gameName, List<string> fileNames)
         {
             SaveDirectory = directory;
             GameName = gameName;

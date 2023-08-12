@@ -42,13 +42,13 @@ namespace GameSaveBackupTool
                 List<string> contents = new List<string>();
 
                 // Backup path
-                if (SaveFiles.BackupDirectory == null)
-                    SaveFiles.BackupDirectory = SaveFiles.GetDefaultBackupDirectory();
-                writer.WriteLine(SaveFiles.BackupDirectory);
+                if (GameProfile.BackupDirectory == null)
+                    GameProfile.BackupDirectory = GameProfile.GetDefaultBackupDirectory();
+                writer.WriteLine(GameProfile.BackupDirectory);
 
                 // Games
                 if (FormMain.Saves != null)
-                    foreach(SaveFiles save in FormMain.Saves)
+                    foreach(GameProfile save in FormMain.Saves)
                     {
                         string str = $"{save.GameName},{save.SaveDirectory}";
                         foreach (string fileName in save.FileNames)
@@ -65,7 +65,7 @@ namespace GameSaveBackupTool
             {
                 string[] lines = (string[]) File.ReadAllLines(_programSavePath);
                 if(lines.Length > 0)
-                    SaveFiles.BackupDirectory = lines[0];
+                    GameProfile.BackupDirectory = lines[0];
             }
 
         } // end SetBackupDirectory
@@ -80,7 +80,7 @@ namespace GameSaveBackupTool
                 {
                     // Backup path
                     if (i == 0)
-                        SaveFiles.BackupDirectory = line;
+                        GameProfile.BackupDirectory = line;
 
                     // Games
                     else
@@ -91,7 +91,7 @@ namespace GameSaveBackupTool
                             List<string> files = new List<string>();
                             for (int j = 2; j < game.Length; j++)
                                 files.Add(game[j]);
-                            FormMain.Saves.Add(new SaveFiles(game[1], game[0], files));
+                            FormMain.Saves.Add(new GameProfile(game[1], game[0], files));
                         }
                     }
 

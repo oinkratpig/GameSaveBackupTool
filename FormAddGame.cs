@@ -29,7 +29,7 @@ namespace GameSaveBackupTool
 
         } // end constructor
 
-        public FormAddGame(SaveFiles game) : this()
+        public FormAddGame(GameProfile game) : this()
         {
             _files = game.FileNames;
             _saveDirectory = game.SaveDirectory;
@@ -148,7 +148,7 @@ namespace GameSaveBackupTool
 
             // If in edit mode, remove game before adding it
             if (_editMode && FormMain.Saves != null)
-                foreach (SaveFiles game in FormMain.Saves)
+                foreach (GameProfile game in FormMain.Saves)
                     if (game.GameName == textBoxGameName.Text)
                     {
                         FormMain.Saves.Remove(game);
@@ -169,7 +169,7 @@ namespace GameSaveBackupTool
 
             // Game name taken
             if (FormMain.Saves != null)
-                foreach (SaveFiles save in FormMain.Saves)
+                foreach (GameProfile save in FormMain.Saves)
                     if (save.GameName == textBoxGameName.Text)
                         error = "Game folder name already taken";
 
@@ -189,7 +189,7 @@ namespace GameSaveBackupTool
             }
 
             // No error - create new game
-            FormMain.Saves.Add(new SaveFiles(_saveDirectory, textBoxGameName.Text, _files));
+            FormMain.Saves.Add(new GameProfile(_saveDirectory, textBoxGameName.Text, _files));
             FormMain.outputText = $"({DateTime.Now}) {((_editMode) ? "Updated" : "Added")} game profile \"{textBoxGameName.Text}\".";
             GameAdded.Invoke(this, EventArgs.Empty);
             ProgramSave.Save();
@@ -204,7 +204,7 @@ namespace GameSaveBackupTool
                 return;
 
             string gameName = textBoxGameName.Text;
-            foreach (SaveFiles save in FormMain.Saves)
+            foreach (GameProfile save in FormMain.Saves)
                 if (save.GameName == gameName)
                 {
                     FormMain.Saves.Remove(save);
