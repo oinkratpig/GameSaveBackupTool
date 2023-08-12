@@ -146,15 +146,6 @@ namespace GameSaveBackupTool
         {
             string? error = null;
 
-            // If in edit mode, remove game before adding it
-            if (_editMode && FormMain.Saves != null)
-                foreach (GameProfile game in FormMain.Saves)
-                    if (game.GameName == textBoxGameName.Text)
-                    {
-                        FormMain.Saves.Remove(game);
-                        break;
-                    }
-
             // Invalid save directory
             if (_saveDirectory == null || !Directory.Exists(_saveDirectory))
                 error = "Save directory does not exist.";
@@ -187,6 +178,15 @@ namespace GameSaveBackupTool
                 MessageBox.Show($"Error: {error}");
                 return;
             }
+
+            // If in edit mode, remove game before adding it
+            if (_editMode && FormMain.Saves != null)
+                foreach (GameProfile game in FormMain.Saves)
+                    if (game.GameName == textBoxGameName.Text)
+                    {
+                        FormMain.Saves.Remove(game);
+                        break;
+                    }
 
             // No error - create new game
             FormMain.Saves.Add(new GameProfile(_saveDirectory, textBoxGameName.Text, _files));
