@@ -113,7 +113,7 @@ namespace GameSaveBackupTool
             {
                 if (save.GameName == comboBoxGames.Text)
                 {
-                    save.Backup(textBoxSaveName.Text);
+                    save.Backup(textBoxSaveName.Text, checkBoxSaveNumberedPrefix.Checked, checkBoxSaveNumberedPostfix.Checked);
                     textBoxSaveName.Text = "";
                     break;
                 }

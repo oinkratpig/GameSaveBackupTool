@@ -4,6 +4,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,12 +41,14 @@ namespace GameSaveBackupTool
 
         } // end GetDefaultSaveName
 
-        public void Backup(string? saveName)
+        public void Backup(string? saveName, bool numberPrefix, bool numberPostfix)
         {
             if (BackupDirectory == null) return;
 
             // Output msg
             FormMain.outputText = $"({DateTime.Now}) Backing up...";
+
+            // == ERRORS ===============
 
             // Invalid save name
             if (saveName != null)
@@ -69,8 +72,47 @@ namespace GameSaveBackupTool
             if (File.Exists(backupGameDirectory + @$"\{saveName}.zip"))
                 FormMain.outputText += $"\r\nSave name \"{saveName}\" already taken. Overwriting.";
 
+            // =========================
+
+            // Get all backup file names
+            List<string> fileNames = new List<string>();
+            foreach (string path in Directory.GetFiles(backupGameDirectory))
+                fileNames.Add(Path.GetFileNameWithoutExtension(path));
+
+            // Number the save name
+            string prefix = "";
+            string postfix = "";
+            if (numberPrefix || numberPostfix)
+            {
+                // Find prefix and postfix
+                int highestPrefix = 0;
+                int highestPostfix = 0;
+                foreach (string fileName in fileNames)
+                {
+                    string[] words = fileName.Split(" ");
+                    if (words.Length == 0) continue;
+                    else
+                    {
+                        int prefixNum = 0;
+                        int postfixNum = 0;
+                        if (numberPrefix)
+                            Int32.TryParse(words[0], out prefixNum);
+                        if (numberPostfix)
+                            Int32.TryParse(words[words.Length - 1], out postfixNum);
+                        highestPrefix = Math.Max(highestPrefix, prefixNum);
+                        highestPostfix = Math.Max(highestPostfix, postfixNum);
+                    }
+                }
+
+                // Add prefix and postfix
+                if(numberPrefix)
+                    prefix = $"{(highestPrefix + 1).ToString("D2")} ";
+                if(numberPostfix)
+                    postfix = $" {(highestPostfix + 1).ToString("D2")}";
+            }
+
             // Zip all save files to backup directory
-            FileStream zipStream = File.Create(backupGameDirectory + @$"\{saveName}.zip");
+            FileStream zipStream = File.Create(backupGameDirectory + @$"\{prefix}{saveName}{postfix}.zip");
             using (MemoryStream ms = new MemoryStream())
             {
                 using (ZipArchive zip = new ZipArchive(ms, ZipArchiveMode.Create, true))

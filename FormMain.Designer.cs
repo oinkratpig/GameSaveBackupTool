@@ -176,6 +176,8 @@
             // checkBoxSaveNumberedPrefix
             // 
             checkBoxSaveNumberedPrefix.AutoSize = true;
+            checkBoxSaveNumberedPrefix.Checked = true;
+            checkBoxSaveNumberedPrefix.CheckState = CheckState.Checked;
             checkBoxSaveNumberedPrefix.Location = new Point(147, 273);
             checkBoxSaveNumberedPrefix.Name = "checkBoxSaveNumberedPrefix";
             checkBoxSaveNumberedPrefix.Size = new Size(60, 19);
