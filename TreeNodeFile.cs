@@ -9,7 +9,7 @@ namespace GameSaveBackupTool
     /// <summary>
     /// A <see cref="TreeNode"/> that represents a file.
     /// </summary>
-    public class TreeNodeFile : TreeNode
+    public class TreeNodeFile : TreeNode, IGameFile
     {
         /// <summary>
         /// The system path of the save file.

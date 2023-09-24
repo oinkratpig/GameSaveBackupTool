@@ -9,7 +9,7 @@ namespace GameSaveBackupTool
     /// <summary>
     /// A <see cref="TreeNode"/> that represents a folder.
     /// </summary>
-    public class TreeNodeFolder : TreeNode
+    public class TreeNodeFolder : TreeNode, IGameFolder
     {
         /// <summary>
         /// Name of the folder.

@@ -7,6 +7,8 @@ using System.Drawing;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -49,9 +51,9 @@ namespace GameSaveBackupTool
 
         private TreeNodeFolder _rootFolderNode;
         private List<string> _files;
-        private string? _saveDirectory;
         private bool _editMode;
 
+        /* Constructor */
         public FormAddGame()
         {
             InitializeComponent();
@@ -70,19 +72,20 @@ namespace GameSaveBackupTool
 
         } // end constructor
 
-        public FormAddGame(GameProfile game) : this()
+        /* Constructor - Edit existing game */
+        public FormAddGame(string gameName, FolderData rootFolder) : this()
         {
-            _files = game.FileNames;
-            _saveDirectory = game.SaveDirectory;
-
-            textBoxGameName.Text = game.GameName;
+            textBoxGameName.Text = gameName;
             textBoxGameName.Enabled = false;
             buttonDeleteProfile.Visible = true;
             this.Text = "Edit Game Profile";
-
             buttonAddGame.Text = "Update Game";
-
             _editMode = true;
+
+            // Create nodes from folder data
+            treeViewBackup.Nodes.Clear();
+            treeViewBackup.Nodes.Add(rootFolder.ConvertToTreeNode(ref treeViewBackup));
+            treeViewBackup.ExpandAll();
 
         } // end constructor
 
@@ -142,7 +145,6 @@ namespace GameSaveBackupTool
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Multiselect = true;
-                dialog.InitialDirectory = _saveDirectory;
                 DialogResult result = dialog.ShowDialog();
 
                 // Get list of files
@@ -160,8 +162,8 @@ namespace GameSaveBackupTool
                 {
                     // Skip file if already in folder
                     bool skip = false;
-                    foreach(TreeNode node in SelectedFolderNode.Nodes)
-                        if(node is TreeNodeFile && ((TreeNodeFile)node).FilePath == path)
+                    foreach (TreeNode node in SelectedFolderNode.Nodes)
+                        if (node is TreeNodeFile && ((TreeNodeFile)node).FilePath == path)
                             skip = true;
                     if (skip) continue;
 
@@ -232,12 +234,8 @@ namespace GameSaveBackupTool
         {
             string? error = null;
 
-            // Invalid save directory
-            if (_saveDirectory == null || !Directory.Exists(_saveDirectory))
-                error = "Save directory does not exist.";
-
             // Game name invalid
-            else if (string.IsNullOrWhiteSpace(textBoxGameName.Text))
+            if (string.IsNullOrWhiteSpace(textBoxGameName.Text))
                 error = "Game folder name cannot be empty";
             else
                 foreach (char ch in Path.GetInvalidFileNameChars())
@@ -245,18 +243,10 @@ namespace GameSaveBackupTool
                         error = "Invalid game folder name";
 
             // Game name taken
-            if (FormMain.Saves != null)
-                foreach (GameProfile save in FormMain.Saves)
+            if (FormMain.Profiles != null && !_editMode)
+                foreach (GameProfile save in FormMain.Profiles)
                     if (save.GameName == textBoxGameName.Text)
                         error = "Game folder name already taken";
-
-            // Any files invalid
-            foreach (string file in _files)
-                if (!File.Exists(file))
-                {
-                    error = "One of the save files does not exist.";
-                    break;
-                }
 
             // Show error and stop creating game
             if (error != null)
@@ -265,20 +255,22 @@ namespace GameSaveBackupTool
                 return;
             }
 
-            // If in edit mode, remove game before adding it
-            if (_editMode && FormMain.Saves != null)
-                foreach (GameProfile game in FormMain.Saves)
-                    if (game.GameName == textBoxGameName.Text)
-                    {
-                        FormMain.Saves.Remove(game);
-                        break;
-                    }
+            // Any files invalid - does NOT prevent updating the profile
+            foreach (string file in _files)
+                if (!File.Exists(file))
+                {
+                    MessageBox.Show($"One or more files do not exist. Continuing anyways.");
+                    break;
+                }
 
-            // No error - create new game
-            FormMain.Saves.Add(new GameProfile(_saveDirectory, textBoxGameName.Text, _files));
+            // If in edit mode, remove game before adding it
+            if (_editMode)
+                FormMain.ProfileRoots.Remove(textBoxGameName.Text);
+
+            // Add game
+            FormMain.ProfileRoots.Add(textBoxGameName.Text, FolderData.ConvertFromFolderNode(_rootFolderNode));
             FormMain.outputText = $"({DateTime.Now}) {((_editMode) ? "Updated" : "Added")} game profile \"{textBoxGameName.Text}\".";
             GameAdded?.Invoke(this, EventArgs.Empty);
-            ProgramSave.Save();
             Close();
 
         } // end buttonAddGame_Click
@@ -286,20 +278,16 @@ namespace GameSaveBackupTool
         /* Delete game profile */
         private void buttonDeleteProfile_Click(object sender, EventArgs e)
         {
-            if (!_editMode || FormMain.Saves == null)
+            if (!_editMode)
                 return;
 
             string gameName = textBoxGameName.Text;
-            foreach (GameProfile save in FormMain.Saves)
-                if (save.GameName == gameName)
-                {
-                    FormMain.Saves.Remove(save);
-                    ProgramSave.Save();
-                    FormMain.outputText = $"({DateTime.Now}) Deleted game profile \"{gameName}\".";
-                    GameAdded?.Invoke(this, EventArgs.Empty);
-                    Close();
-                    break;
-                }
+            if(FormMain.ProfileRoots.Remove(gameName))
+            {
+                FormMain.outputText = $"({DateTime.Now}) Deleted game profile \"{gameName}\".";
+                GameAdded?.Invoke(this, EventArgs.Empty);
+                Close();
+            }
 
         } // end buttonDeleteProfile_Click
 

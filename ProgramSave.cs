@@ -23,18 +23,21 @@ namespace GameSaveBackupTool
                 file.Close();
             }
 
+            /*
             // Program save exists
             else
                 ReadProgramSave();
+            */
 
         } // end Init
 
         public static string GetLocalPath()
         {
-            return System.AppContext.BaseDirectory;
+            return AppContext.BaseDirectory;
 
         } // end GetLocalPath
 
+        /*
         public static void Save()
         {
             using (StreamWriter writer = new StreamWriter(_programSavePath))
@@ -47,10 +50,10 @@ namespace GameSaveBackupTool
                 writer.WriteLine(GameProfile.BackupDirectory);
 
                 // Games
-                if (FormMain.Saves != null)
-                    foreach(GameProfile save in FormMain.Saves)
+                if (FormMain.Profiles != null)
+                    foreach(GameProfile save in FormMain.Profiles)
                     {
-                        string str = $"{save.GameName},{save.SaveDirectory}";
+                        string str = $"{save.GameName},{save.LastDirectoryVisited}";
                         foreach (string fileName in save.FileNames)
                             str += $",{fileName}";
                         writer.WriteLine(str);
@@ -58,6 +61,7 @@ namespace GameSaveBackupTool
             }
 
         } // end Save
+        */
 
         private static void SetBackupDirectory()
         {
@@ -70,6 +74,7 @@ namespace GameSaveBackupTool
 
         } // end SetBackupDirectory
 
+        /*
         private static void ReadProgramSave()
         {
             using(StreamReader reader = new StreamReader(_programSavePath))
@@ -91,7 +96,7 @@ namespace GameSaveBackupTool
                             List<string> files = new List<string>();
                             for (int j = 2; j < game.Length; j++)
                                 files.Add(game[j]);
-                            FormMain.Saves.Add(new GameProfile(game[1], game[0], files));
+                            FormMain.Profiles.Add(new GameProfile(game[1], game[0], files));
                         }
                     }
 
@@ -101,6 +106,7 @@ namespace GameSaveBackupTool
             }
 
         } // end SetGameSaves
+        */
 
     } // end class ProgramSave
 

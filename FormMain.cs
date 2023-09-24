@@ -16,20 +16,35 @@ namespace GameSaveBackupTool
     {
         public static FormAddGame? FormAddGameInstance;
 
-        public static List<GameProfile>? Saves { get; set; }
+        public static List<GameProfile> Profiles { get; set; }
+
+        /// <summary>
+        /// Root folders for all game profiles.<br/>
+        /// Key: Game profile name<br/>
+        /// Value: Root folder save data
+        /// </summary>
+        public static Dictionary<string, FolderData> ProfileRoots { get; set; }
 
         public static string? outputText;
 
+        /* Constructor */
+        static FormMain()
+        {
+            Profiles = new List<GameProfile>();
+            ProfileRoots = new Dictionary<string, FolderData>();
+
+        } // end constructor
+
+        /* Constructor */
         public FormMain()
         {
             InitializeComponent();
-            Saves = new List<GameProfile>();
 
             // Load program save file
             GameProfile.BackupDirectory = GameProfile.GetDefaultBackupDirectory();
             ProgramSave.Init();
             textBoxDirectory.Text = GameProfile.BackupDirectory;
-            ProgramSave.Save();
+            //ProgramSave.Save();
             OnGameAdded(this, EventArgs.Empty);
 
             // Set game profile if one exists
@@ -41,13 +56,9 @@ namespace GameSaveBackupTool
         /* Event called when new game is added */
         public void OnGameAdded(object? sender, EventArgs e)
         {
-            if (Saves == null) return;
-
             comboBoxGames.Items.Clear();
-            foreach (GameProfile save in Saves)
-            {
-                comboBoxGames.Items.Add(save.GameName);
-            }
+            foreach (string gameName in ProfileRoots.Keys)
+                comboBoxGames.Items.Add(gameName);
 
             // Set game profile if one exists and one not selected
             if (comboBoxGames.SelectedIndex == -1 && comboBoxGames.Items.Count > 0)
@@ -107,13 +118,13 @@ namespace GameSaveBackupTool
         /* Backup */
         private void buttonBackup_Click(object sender, EventArgs e)
         {
-            if (Saves == null) return;
+            if (Profiles == null) return;
 
-            foreach (GameProfile save in Saves)
+            foreach (GameProfile save in Profiles)
             {
                 if (save.GameName == comboBoxGames.Text)
                 {
-                    save.Backup(textBoxSaveName.Text, checkBoxSaveNumberedPrefix.Checked, checkBoxSaveNumberedPostfix.Checked);
+                    //save.Backup(textBoxSaveName.Text, checkBoxSaveNumberedPrefix.Checked, checkBoxSaveNumberedPostfix.Checked);
                     textBoxSaveName.Text = "";
                     break;
                 }
@@ -136,7 +147,7 @@ namespace GameSaveBackupTool
         {
             GameProfile.BackupDirectory = GameProfile.GetDefaultBackupDirectory();
             textBoxDirectory.Text = GameProfile.BackupDirectory;
-            ProgramSave.Save();
+            //ProgramSave.Save();
 
             outputText = $"({DateTime.Now}) Reset backup directory.";
             UpdateOutputTextBox();
@@ -169,19 +180,20 @@ namespace GameSaveBackupTool
         /* Edit game */
         private void buttonEditGame_Click(object sender, EventArgs e)
         {
-            if (Saves == null) return;
-
             // Find game to edit
-            GameProfile? game = null;
+            FolderData? root = null;
             string gameName = comboBoxGames.Text;
-            foreach (GameProfile save in Saves)
-                if (gameName == save.GameName)
-                    game = save;
+            foreach (KeyValuePair<string, FolderData> kvp in ProfileRoots)
+                if (kvp.Key == gameName)
+                    root = kvp.Value;
+
+            // No existing game
+            if (root == null) return;
 
             // Open add game window
-            if (FormAddGameInstance == null && game != null)
+            if (FormAddGameInstance == null)
             {
-                FormAddGameInstance = new FormAddGame(game);
+                FormAddGameInstance = new FormAddGame(gameName, root);
                 FormAddGameInstance.GameAdded += OnGameAdded;
                 FormAddGameInstance.Show();
             }

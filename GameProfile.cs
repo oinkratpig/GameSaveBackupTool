@@ -14,17 +14,25 @@ namespace GameSaveBackupTool
     {
         public static string? BackupDirectory;
 
-        public string SaveDirectory { get; private set; }
+        public string LastDirectoryVisited { get; private set; }
 
         public string GameName { get; private set; }
 
-        public List<string> FileNames { get; private set; }
+        public FolderData? RootFolderData { get; set; }
 
-        public GameProfile(string directory, string gameName, List<string> fileNames)
+        /* Constructor */
+        public GameProfile(string gameName, FolderData rootFolderData) : this(gameName)
         {
-            SaveDirectory = directory;
+            RootFolderData = rootFolderData;
+
+        } // end constructor
+
+        /* Constructor */
+        public GameProfile(string gameName)
+        {
             GameName = gameName;
-            FileNames = fileNames;
+
+            LastDirectoryVisited = string.Empty;
 
         } // end constructor
 
@@ -41,6 +49,7 @@ namespace GameSaveBackupTool
 
         } // end GetDefaultSaveName
 
+        /*
         public void Backup(string? saveName, bool numberPrefix, bool numberPostfix)
         {
             if (BackupDirectory == null) return;
@@ -133,6 +142,7 @@ namespace GameSaveBackupTool
             FormMain.outputText += "\r\nDone.";
 
         } // end Backup
+        */
 
     } // end class SaveFiles
 
