@@ -197,8 +197,6 @@ namespace GameSaveBackupTool
                                     file.FilePath,
                                     file.GetPath()
                             );
-
-                            MessageBox.Show(file.GetPath());
                         }
 
                     }
