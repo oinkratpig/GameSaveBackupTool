@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,17 +7,22 @@ using System.Threading.Tasks;
 
 namespace GameSaveBackupTool
 {
+    [JsonObject]
     public class FolderData : GameData, IGameFolder
     {
+        [JsonProperty]
         public string FolderName { get; private set; }
 
+        [JsonProperty]
         public List<GameData> Children;
+
+        [JsonProperty]
+        public override FolderData? Parent { get; set; }
 
         /* Constructor */
         public FolderData(string name)
         {
             FolderName = name;
-
             Children = new List<GameData>();
 
         } // end constructor
@@ -61,6 +67,7 @@ namespace GameSaveBackupTool
                 if(child is FileData)
                 {
                     TreeNodeFile childFile = new TreeNodeFile(((FileData)child).FilePath);
+                    childFile.Text = Path.GetFileName(((FileData)child).FilePath);
                     startFolder.Nodes.Add(childFile);
                 }
                 // Add folders
@@ -74,6 +81,45 @@ namespace GameSaveBackupTool
             return startFolder;
 
         } // end CreateNodes
+
+        /// <summary>
+        /// Returns list of every single file within folder and all subfolders.
+        /// </summary>
+        public List<FileData> GetAllFiles()
+        {
+            List<FileData> files = new List<FileData>();
+            foreach(GameData child in Children)
+            {
+                if(child is FileData)
+                    files.Add((FileData)child);
+                // Add all subfolders' children
+                else if(child is FolderData)
+                    files.AddRange(((FolderData)child).GetAllFiles());
+            }
+            return files;
+
+        } // end GetAllFiles
+
+        /// <summary>
+        /// Fix parents that are null when serialized. No idea why this is an issue.<br/>
+        /// (This program isn't that serious and I don't feel like spending 10 hours on it).
+        /// </summary>
+        public void UpdateParents()
+        {
+            foreach(GameData child in Children)
+            {
+                child.Parent = this;
+                if(child is FolderData)
+                    ((FolderData)child).UpdateParents();
+            }
+
+        } // end UpdateParents
+
+        public override string GetPath()
+        {
+            return base.GetPath() + FolderName + "\\";
+
+        } // end GetPath
 
     } // end class FolderData
 

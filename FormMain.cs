@@ -18,20 +18,12 @@ namespace GameSaveBackupTool
 
         public static List<GameProfile> Profiles { get; set; }
 
-        /// <summary>
-        /// Root folders for all game profiles.<br/>
-        /// Key: Game profile name<br/>
-        /// Value: Root folder save data
-        /// </summary>
-        public static Dictionary<string, FolderData> ProfileRoots { get; set; }
-
         public static string? outputText;
 
         /* Constructor */
         static FormMain()
         {
             Profiles = new List<GameProfile>();
-            ProfileRoots = new Dictionary<string, FolderData>();
 
         } // end constructor
 
@@ -40,11 +32,18 @@ namespace GameSaveBackupTool
         {
             InitializeComponent();
 
+            /*
             // Load program save file
-            GameProfile.BackupDirectory = GameProfile.GetDefaultBackupDirectory();
+            Save.BackupDirectory = Save.GetDefaultBackupDirectory();
             ProgramSave.Init();
-            textBoxDirectory.Text = GameProfile.BackupDirectory;
+            textBoxDirectory.Text = Save.BackupDirectory;
             //ProgramSave.Save();
+            OnGameAdded(this, EventArgs.Empty);
+            */
+
+            // Load program save file
+            Save.LoadSave();
+            textBoxDirectory.Text = Save.BackupDirectory;
             OnGameAdded(this, EventArgs.Empty);
 
             // Set game profile if one exists
@@ -57,12 +56,14 @@ namespace GameSaveBackupTool
         public void OnGameAdded(object? sender, EventArgs e)
         {
             comboBoxGames.Items.Clear();
-            foreach (string gameName in ProfileRoots.Keys)
+            foreach (string gameName in Save.ProfileRootFolders.Keys)
                 comboBoxGames.Items.Add(gameName);
 
             // Set game profile if one exists and one not selected
             if (comboBoxGames.SelectedIndex == -1 && comboBoxGames.Items.Count > 0)
                 comboBoxGames.SelectedIndex = 0;
+
+            Save.CreateSave();
 
             UpdateOutputTextBox();
 
@@ -107,8 +108,9 @@ namespace GameSaveBackupTool
                     string? directory = Path.GetDirectoryName(dialog.FileName);
                     if (!string.IsNullOrWhiteSpace(directory) && Directory.Exists(directory))
                     {
-                        GameProfile.BackupDirectory = directory;
+                        Save.BackupDirectory = directory;
                         textBoxDirectory.Text = directory;
+                        Save.CreateSave();
                     }
                 }
             }
@@ -120,15 +122,14 @@ namespace GameSaveBackupTool
         {
             if (Profiles == null) return;
 
-            foreach (GameProfile save in Profiles)
-            {
-                if (save.GameName == comboBoxGames.Text)
+            foreach (string gameName in Save.ProfileRootFolders.Keys)
+                if (gameName == comboBoxGames.Text)
                 {
-                    //save.Backup(textBoxSaveName.Text, checkBoxSaveNumberedPrefix.Checked, checkBoxSaveNumberedPostfix.Checked);
+                    FolderData rootFolder = Save.ProfileRootFolders[gameName];
+                    Save.Backup(rootFolder, gameName, textBoxSaveName.Text, checkBoxSaveNumberedPrefix.Checked, checkBoxSaveNumberedPostfix.Checked);
                     textBoxSaveName.Text = "";
                     break;
                 }
-            }
 
             UpdateOutputTextBox();
 
@@ -137,17 +138,17 @@ namespace GameSaveBackupTool
         /* Open backups folder */
         private void buttonOpenBackups_Click(object sender, EventArgs e)
         {
-            if (GameProfile.BackupDirectory == null) return;
-            Directory.CreateDirectory(GameProfile.BackupDirectory);
-            Process.Start("explorer.exe", GameProfile.BackupDirectory);
+            if (Save.BackupDirectory == null) return;
+            Directory.CreateDirectory(Save.BackupDirectory);
+            Process.Start("explorer.exe", Save.BackupDirectory);
 
         } // end buttonOpenBackups_Click
 
         private void buttonResetDirectory_Click(object sender, EventArgs e)
         {
-            GameProfile.BackupDirectory = GameProfile.GetDefaultBackupDirectory();
-            textBoxDirectory.Text = GameProfile.BackupDirectory;
-            //ProgramSave.Save();
+            Save.BackupDirectory = Save.GetDefaultBackupDirectory();
+            textBoxDirectory.Text = Save.BackupDirectory;
+            Save.CreateSave();
 
             outputText = $"({DateTime.Now}) Reset backup directory.";
             UpdateOutputTextBox();
@@ -183,7 +184,7 @@ namespace GameSaveBackupTool
             // Find game to edit
             FolderData? root = null;
             string gameName = comboBoxGames.Text;
-            foreach (KeyValuePair<string, FolderData> kvp in ProfileRoots)
+            foreach (KeyValuePair<string, FolderData> kvp in Save.ProfileRootFolders)
                 if (kvp.Key == gameName)
                     root = kvp.Value;
 

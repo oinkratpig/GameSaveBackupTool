@@ -12,8 +12,6 @@ namespace GameSaveBackupTool
 {
     public class GameProfile
     {
-        public static string? BackupDirectory;
-
         public string LastDirectoryVisited { get; private set; }
 
         public string GameName { get; private set; }
@@ -36,12 +34,6 @@ namespace GameSaveBackupTool
 
         } // end constructor
 
-        public static string GetDefaultBackupDirectory()
-        {
-            return ProgramSave.GetLocalPath() + @"Backups";
-
-        } // end GetDefaultBackupDirectory
-
         public static string GetDefaultSaveName()
         {
             string dateTime = DateTime.Now.ToString().Replace("/", "_").Replace(":", "-");
@@ -49,10 +41,12 @@ namespace GameSaveBackupTool
 
         } // end GetDefaultSaveName
 
-        /*
-        public void Backup(string? saveName, bool numberPrefix, bool numberPostfix)
+        /// <summary>
+        /// Creates an archive containing the profile's save files and folders.
+        /// </summary>
+        public void Backup(FolderData rootFolder, string? saveName, bool numberPrefix, bool numberPostfix)
         {
-            if (BackupDirectory == null) return;
+            if (Save.BackupDirectory == null) return;
 
             // Output msg
             FormMain.outputText = $"({DateTime.Now}) Backing up...";
@@ -74,7 +68,7 @@ namespace GameSaveBackupTool
                 saveName = GetDefaultSaveName();
 
             // Create backup directory if it doesn't already exist
-            string backupGameDirectory = @$"{BackupDirectory}\{GameName}";
+            string backupGameDirectory = @$"{Save.BackupDirectory}\{GameName}";
             Directory.CreateDirectory(backupGameDirectory);
 
             // Save name already taken
@@ -120,6 +114,27 @@ namespace GameSaveBackupTool
                     postfix = $" {(highestPostfix + 1).ToString("D2")}";
             }
 
+            // Zip save to backup directory
+            using (FileStream zipStream = File.Create(backupGameDirectory + @$"\{prefix}{saveName}{postfix}.zip"))
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (ZipArchive zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
+                    {
+                        List<FileData> files = rootFolder.GetAllFiles();
+                        foreach (FileData file in files)
+                        {
+                            ZipArchiveEntry entry = zip.CreateEntryFromFile(
+                                    Path.GetFileName(file.FilePath),
+                                    Path.GetFileName(file.GetPath())
+                            );
+                        }
+                    }
+                    ms.WriteTo(zipStream);
+                }
+            }
+
+            /*
             // Zip all save files to backup directory
             FileStream zipStream = File.Create(backupGameDirectory + @$"\{prefix}{saveName}{postfix}.zip");
             using (MemoryStream ms = new MemoryStream())
@@ -137,12 +152,12 @@ namespace GameSaveBackupTool
                 ms.WriteTo(zipStream);
             }
             zipStream.Close();
+            */
 
             // Done
             FormMain.outputText += "\r\nDone.";
 
         } // end Backup
-        */
 
     } // end class SaveFiles
 

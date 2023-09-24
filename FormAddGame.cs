@@ -84,8 +84,13 @@ namespace GameSaveBackupTool
 
             // Create nodes from folder data
             treeViewBackup.Nodes.Clear();
-            treeViewBackup.Nodes.Add(rootFolder.ConvertToTreeNode(ref treeViewBackup));
+            _rootFolderNode = rootFolder.ConvertToTreeNode(ref treeViewBackup);
+            treeViewBackup.Nodes.Add(_rootFolderNode);
             treeViewBackup.ExpandAll();
+
+            // Remove existing folder data
+            Save.ProfileRootFolders.Remove(gameName);
+
 
         } // end constructor
 
@@ -265,10 +270,10 @@ namespace GameSaveBackupTool
 
             // If in edit mode, remove game before adding it
             if (_editMode)
-                FormMain.ProfileRoots.Remove(textBoxGameName.Text);
+                Save.ProfileRootFolders.Remove(textBoxGameName.Text);
 
             // Add game
-            FormMain.ProfileRoots.Add(textBoxGameName.Text, FolderData.ConvertFromFolderNode(_rootFolderNode));
+            Save.ProfileRootFolders.Add(textBoxGameName.Text, FolderData.ConvertFromFolderNode(_rootFolderNode));
             FormMain.outputText = $"({DateTime.Now}) {((_editMode) ? "Updated" : "Added")} game profile \"{textBoxGameName.Text}\".";
             GameAdded?.Invoke(this, EventArgs.Empty);
             Close();
@@ -282,10 +287,11 @@ namespace GameSaveBackupTool
                 return;
 
             string gameName = textBoxGameName.Text;
-            if(FormMain.ProfileRoots.Remove(gameName))
+            if(Save.ProfileRootFolders.Remove(gameName))
             {
                 FormMain.outputText = $"({DateTime.Now}) Deleted game profile \"{gameName}\".";
                 GameAdded?.Invoke(this, EventArgs.Empty);
+                Save.CreateSave();
                 Close();
             }
 

@@ -69,7 +69,7 @@ namespace GameSaveBackupTool
             {
                 string[] lines = (string[]) File.ReadAllLines(_programSavePath);
                 if(lines.Length > 0)
-                    GameProfile.BackupDirectory = lines[0];
+                    Save.BackupDirectory = lines[0];
             }
 
         } // end SetBackupDirectory
