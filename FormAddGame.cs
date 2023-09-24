@@ -2,18 +2,52 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace GameSaveBackupTool
 {
     public partial class FormAddGame : Form
     {
+        /// <summary>
+        /// Current selected <see cref="TreeNodeFolder"/>.
+        /// Null if currently-selected node isn't a folder.
+        /// </summary>
+        public TreeNodeFolder SelectedFolderNode
+        {
+            get
+            {
+                TreeNodeFolder selectedNode = _rootFolderNode;
+                if (treeViewBackup.SelectedNode is TreeNodeFolder)
+                    selectedNode = (TreeNodeFolder)treeViewBackup.SelectedNode;
+                return selectedNode;
+            }
+        }
+
+        /// <summary>
+        /// Current selected <see cref="TreeNodeFile"/>.
+        /// Null if currently-selected node isn't a file.
+        /// </summary>
+        public TreeNodeFile? SelectedFileNode
+        {
+            get
+            {
+                TreeNodeFile? selectedNode = null;
+                if (treeViewBackup.SelectedNode is TreeNodeFile)
+                    selectedNode = (TreeNodeFile)treeViewBackup.SelectedNode;
+                return selectedNode;
+            }
+        }
+
         public event EventHandler? GameAdded;
 
+        private TreeNodeFolder _rootFolderNode;
         private List<string> _files;
         private string? _saveDirectory;
         private bool _editMode;
@@ -26,6 +60,13 @@ namespace GameSaveBackupTool
 
             _files = new List<string>();
             _editMode = false;
+
+            treeViewBackup.TreeViewNodeSorter = new BackupTreeViewSorter();
+
+            // Root folder
+            _rootFolderNode = new TreeNodeFolder("Backup");
+            _rootFolderNode.Text = _rootFolderNode.FolderName;
+            treeViewBackup.Nodes.Add(_rootFolderNode);
 
         } // end constructor
 
@@ -43,8 +84,6 @@ namespace GameSaveBackupTool
 
             _editMode = true;
 
-            UpdateFilesList();
-
         } // end constructor
 
         public void OnDispose(object? sender, EventArgs e)
@@ -53,8 +92,93 @@ namespace GameSaveBackupTool
 
         } // end OnDispose
 
-        /*
-        private void buttonBrowseSaveDirectory_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Creates a new folder for organizing the backup archive.
+        /// </summary>
+        /// <param name="parent">Parent <see cref="Folder"/>. Null if no parent.</param>
+        private void CreateFolder(TreeNodeFolder? parent)
+        {
+            if (parent == null) parent = _rootFolderNode;
+
+            // Get name of new folder
+            string name = textBoxCreateFolder.Text;
+            textBoxCreateFolder.Text = string.Empty;
+            // Empty name
+            if (name == string.Empty)
+            {
+                MessageBox.Show("Folder name cannot be empty.");
+                return;
+            }
+            // Check for error
+            foreach (char c in Path.GetInvalidFileNameChars())
+                if (name.Contains(c))
+                {
+                    // Invalid folder name
+                    MessageBox.Show("Invalid folder name.");
+                    return;
+                }
+            foreach (TreeNode node in parent.Nodes)
+                if (node is TreeNodeFolder && ((TreeNodeFolder)node).FolderName == name)
+                {
+                    // Name already taken inside parent
+                    MessageBox.Show("Folder name is duplicate.");
+                    return;
+                }
+
+            // Create folder
+            TreeNodeFolder newFolder = new TreeNodeFolder(name);
+            newFolder.Text = name;
+            parent.Nodes.Add(newFolder);
+            parent.Expand();
+
+            // Sort
+            treeViewBackup.Sort();
+
+        } // end CreateFolder
+
+        /* Add files */
+        private void buttonAddFiles_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Multiselect = true;
+                dialog.InitialDirectory = _saveDirectory;
+                DialogResult result = dialog.ShowDialog();
+
+                // Get list of files
+                List<string> filePaths = new List<string>();
+                if (result == DialogResult.OK)
+                {
+                    string[] paths = dialog.FileNames;
+                    foreach (string path in paths)
+                        if (!string.IsNullOrEmpty(path) && File.Exists(path))
+                            filePaths.Add(path);
+                }
+
+                // Add files to folder
+                foreach (string path in filePaths)
+                {
+                    // Skip file if already in folder
+                    bool skip = false;
+                    foreach(TreeNode node in SelectedFolderNode.Nodes)
+                        if(node is TreeNodeFile && ((TreeNodeFile)node).FilePath == path)
+                            skip = true;
+                    if (skip) continue;
+
+                    // Add file
+                    TreeNodeFile fileNode = new TreeNodeFile(path);
+                    SelectedFolderNode.Nodes.Add(fileNode);
+                }
+                SelectedFolderNode.Expand();
+            }
+
+            // Sort
+            treeViewBackup.Sort();
+
+        } // end buttonAddFiles_Click
+
+        /* Add save folder */
+        private void buttonAddFolder_Click(object sender, EventArgs e)
         {
             // Create file choice dialog
             using (OpenFileDialog dialog = new OpenFileDialog())
@@ -68,78 +192,40 @@ namespace GameSaveBackupTool
                 DialogResult result = dialog.ShowDialog();
 
                 // Get list of files
+                List<string> filePaths = new List<string>();
+                string? directory = string.Empty;
                 if (result == DialogResult.OK)
                 {
-                    string? directory = Path.GetDirectoryName(dialog.FileName);
+                    directory = Path.GetDirectoryName(dialog.FileName);
                     if (!string.IsNullOrWhiteSpace(directory) && Directory.Exists(directory))
                     {
-                        _files.Clear();
-                        _saveDirectory = directory;
-                        //textBoxSaveDirectory.Text = _saveDirectory;
-
-                        string[] files = Directory.GetFiles(_saveDirectory);
+                        string[] files = Directory.GetFiles(directory);
                         foreach (string file in files)
                             if (File.Exists(file))
-                            {
-                                _files.Add(file);
-                                listBoxFiles.Items.Add(file);
-                            }
+                                filePaths.Add(file);
                     }
+                    // Invalid folder
+                    else return;
                 }
-            }
 
-        } // end buttonBrowseSaveDirectory_Click
-        */
+                // Add folder node
+                TreeNodeFolder folder = new TreeNodeFolder(Path.GetFileName(directory));
+                folder.Text = folder.FolderName;
+                SelectedFolderNode.Nodes.Add(folder);
+                SelectedFolderNode.Expand();
 
-        /* Add files */
-        private void buttonAddFiles_Click(object sender, EventArgs e)
-        {
-            using (OpenFileDialog dialog = new OpenFileDialog())
-            {
-                dialog.Multiselect = true;
-                dialog.InitialDirectory = _saveDirectory;
-                DialogResult result = dialog.ShowDialog();
-
-                // Get list of files
-                if (result == DialogResult.OK)
+                // Add files
+                foreach (string path in filePaths)
                 {
-                    string[] paths = dialog.FileNames;
-                    foreach (string path in paths)
-                        if (!string.IsNullOrEmpty(path) && File.Exists(path))
-                        {
-                            _files.Add(path);
-                            // Most recent file added is default save directory
-                            _saveDirectory = Path.GetDirectoryName(path);
-                        }
-                }
-
-                UpdateFilesList();
-            }
-        } // end buttonAddFiles_Click
-
-        /* Remove file from profile */
-        private void buttonRemoveFile_Click(object sender, EventArgs e)
-        {
-            if (listBoxFiles.SelectedIndex != -1)
-            {
-                string? filePath = listBoxFiles.SelectedItem.ToString();
-                if (filePath != null)
-                {
-                    _files.Remove(filePath);
-                    UpdateFilesList();
+                    TreeNodeFile file = new TreeNodeFile(path);
+                    folder.Nodes.Add(file);
                 }
             }
 
-        } // end buttonRemoveFile_Click
+            // Sort
+            treeViewBackup.Sort();
 
-        /* Update files list */
-        private void UpdateFilesList()
-        {
-            listBoxFiles.Items.Clear();
-            foreach (string file in _files)
-                listBoxFiles.Items.Add(file);
-
-        } // end UpdateFilesList
+        } // end buttonAddFolder_Click
 
         /* Add / Edit game profile */
         private void buttonAddGame_Click(object sender, EventArgs e)
@@ -191,7 +277,7 @@ namespace GameSaveBackupTool
             // No error - create new game
             FormMain.Saves.Add(new GameProfile(_saveDirectory, textBoxGameName.Text, _files));
             FormMain.outputText = $"({DateTime.Now}) {((_editMode) ? "Updated" : "Added")} game profile \"{textBoxGameName.Text}\".";
-            GameAdded.Invoke(this, EventArgs.Empty);
+            GameAdded?.Invoke(this, EventArgs.Empty);
             ProgramSave.Save();
             Close();
 
@@ -210,12 +296,40 @@ namespace GameSaveBackupTool
                     FormMain.Saves.Remove(save);
                     ProgramSave.Save();
                     FormMain.outputText = $"({DateTime.Now}) Deleted game profile \"{gameName}\".";
-                    GameAdded.Invoke(this, EventArgs.Empty);
+                    GameAdded?.Invoke(this, EventArgs.Empty);
                     Close();
                     break;
                 }
 
         } // end buttonDeleteProfile_Click
+
+        /* Create folder button */
+        private void buttonCreateFolder_Click(object sender, EventArgs e)
+        {
+            // Create folder
+            CreateFolder(SelectedFolderNode);
+
+        } // end buttonCreateFolder_Click
+
+        /* Remove selected */
+        private void buttonRemoveSelected_Click(object sender, EventArgs e)
+        {
+            TreeNode? nodeToDelete = null;
+
+            // File
+            if (SelectedFileNode != null)
+                nodeToDelete = SelectedFileNode;
+            // Folder
+            else if (SelectedFolderNode != _rootFolderNode)
+                nodeToDelete = SelectedFolderNode;
+
+            // Undeletable
+            if (nodeToDelete == null) return;
+
+            // Delete node
+            nodeToDelete.Remove();
+
+        } // end buttonRemoveSelected_Click
 
     } // end class FormAddGame
 
