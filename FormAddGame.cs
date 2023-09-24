@@ -88,10 +88,6 @@ namespace GameSaveBackupTool
             treeViewBackup.Nodes.Add(_rootFolderNode);
             treeViewBackup.ExpandAll();
 
-            // Remove existing folder data
-            Save.ProfileRootFolders.Remove(gameName);
-
-
         } // end constructor
 
         public void OnDispose(object? sender, EventArgs e)

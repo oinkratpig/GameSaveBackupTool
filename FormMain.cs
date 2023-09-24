@@ -120,8 +120,6 @@ namespace GameSaveBackupTool
         /* Backup */
         private void buttonBackup_Click(object sender, EventArgs e)
         {
-            if (Profiles == null) return;
-
             foreach (string gameName in Save.ProfileRootFolders.Keys)
                 if (gameName == comboBoxGames.Text)
                 {
