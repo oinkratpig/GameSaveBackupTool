@@ -36,6 +36,7 @@ namespace GameSaveBackupTool
         {
             FolderName = folderName;
             Text = folderName;
+            ToolTipText = "Folder";
 
             BackColor = Color.LightGoldenrodYellow;
 

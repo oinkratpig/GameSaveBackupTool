@@ -68,6 +68,7 @@ namespace GameSaveBackupTool
             // Root folder
             _rootFolderNode = new TreeNodeFolder("Backup");
             _rootFolderNode.Text = _rootFolderNode.FolderName;
+            _rootFolderNode.ToolTipText = string.Empty;
             treeViewBackup.Nodes.Add(_rootFolderNode);
 
         } // end constructor
@@ -180,7 +181,7 @@ namespace GameSaveBackupTool
 
         } // end buttonAddFiles_Click
 
-        /* Add save folder */
+        /* Add folder link */
         private void buttonAddFolder_Click(object sender, EventArgs e)
         {
             // Create file choice dialog
@@ -200,6 +201,7 @@ namespace GameSaveBackupTool
                 if (result == DialogResult.OK)
                 {
                     directory = Path.GetDirectoryName(dialog.FileName);
+                    /*
                     if (!string.IsNullOrWhiteSpace(directory) && Directory.Exists(directory))
                     {
                         string[] files = Directory.GetFiles(directory);
@@ -209,20 +211,15 @@ namespace GameSaveBackupTool
                     }
                     // Invalid folder
                     else return;
+                    */
+                    if (string.IsNullOrWhiteSpace(directory) || !Directory.Exists(directory))
+                        return;
                 }
 
-                // Add folder node
-                TreeNodeFolder folder = new TreeNodeFolder(Path.GetFileName(directory));
-                folder.Text = folder.FolderName;
+                // Add folder link node
+                TreeNodeFolderLink folder = new TreeNodeFolderLink(directory);
                 SelectedFolderNode.Nodes.Add(folder);
                 SelectedFolderNode.Expand();
-
-                // Add files
-                foreach (string path in filePaths)
-                {
-                    TreeNodeFile file = new TreeNodeFile(path);
-                    folder.Nodes.Add(file);
-                }
             }
 
             // Sort
@@ -283,7 +280,7 @@ namespace GameSaveBackupTool
                 return;
 
             string gameName = textBoxGameName.Text;
-            if(Save.ProfileRootFolders.Remove(gameName))
+            if (Save.ProfileRootFolders.Remove(gameName))
             {
                 FormMain.outputText = $"({DateTime.Now}) Deleted game profile \"{gameName}\".";
                 GameAdded?.Invoke(this, EventArgs.Empty);

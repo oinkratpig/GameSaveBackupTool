@@ -20,7 +20,7 @@ namespace GameSaveBackupTool
             {
                 _filePath = value;
                 Text = Path.GetFileName(_filePath);
-                ToolTipText = _filePath;
+                ToolTipText = $"File: Specific file to copy every backup.\n{_filePath}";
             }
         }
 

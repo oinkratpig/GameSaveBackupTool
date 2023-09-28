@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace GameSaveBackupTool
 {
     /// <summary>
-    /// A folder contained in the archive.<br/>
-    /// Used for organizing backup files.
+    /// A link to a folder.<br/>
+    /// Backup targets all files within the folder at the time of backup.
     /// </summary>
-    public interface IGameFolder
+    public interface IGameFolderLink
     {
-        public string FolderName { get; }
+        public string FolderPath { get; }
 
     } // end interface IGameFolder
 

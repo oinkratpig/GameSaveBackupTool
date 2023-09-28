@@ -45,7 +45,6 @@ namespace GameSaveBackupTool
             ProfileRootFolders = new Dictionary<string, FolderData>();
             BackupDirectory = GetDefaultBackupDirectory();
 
-            // Stinky
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
             {
                 Formatting = Newtonsoft.Json.Formatting.None,
@@ -190,6 +189,7 @@ namespace GameSaveBackupTool
                 {
                     using (ZipArchive zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
                     {
+                        // Add all files in folder
                         List<FileData> files = rootFolder.GetAllFiles();
                         foreach (FileData file in files)
                         {
@@ -198,7 +198,18 @@ namespace GameSaveBackupTool
                                     file.GetPath()
                             );
                         }
-
+                        // Add all folder links in folder
+                        List<FolderLinkData> folderLinks = rootFolder.GetAllFolderLinks();
+                        foreach (FolderLinkData folderLink in folderLinks)
+                        {
+                            string[] filePaths = Directory.GetFiles(folderLink.FolderPath);
+                            foreach(string path in filePaths)
+                            {
+                                ZipArchiveEntry entry = zip.CreateEntryFromFile(
+                                    path, folderLink.GetPath() + Path.GetFileName(path)
+                                );
+                            }
+                        }
                     }
                     ms.WriteTo(zipStream);
                 }

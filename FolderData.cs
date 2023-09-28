@@ -50,6 +50,13 @@ namespace GameSaveBackupTool
                     startFolder.Children.Add(childFolder);
                     childFolder.Parent = startFolder;
                 }
+                // Add folder links
+                else if (child is TreeNodeFolderLink)
+                {
+                    FolderLinkData childFolderLink = new FolderLinkData(((TreeNodeFolderLink)child).FolderPath);
+                    startFolder.Children.Add(childFolderLink);
+                    childFolderLink.Parent = startFolder;
+                }
             }
             return startFolder;
 
@@ -77,6 +84,13 @@ namespace GameSaveBackupTool
                     childFolder.Text = ((FolderData)child).FolderName;
                     startFolder.Nodes.Add(childFolder);
                 }
+                // Add folder links
+                if (child is FolderLinkData)
+                {
+                    TreeNodeFolderLink childFolderLink = new TreeNodeFolderLink(((FolderLinkData)child).FolderPath);
+                    childFolderLink.Text = Path.GetFileName(FolderLinkData.GetFolderName(((FolderLinkData)child).FolderPath));
+                    startFolder.Nodes.Add(childFolderLink);
+                }
             }
             return startFolder;
 
@@ -99,6 +113,24 @@ namespace GameSaveBackupTool
             return files;
 
         } // end GetAllFiles
+
+        /// <summary>
+        /// Returns list of every single folder link within folder and all subfolders.
+        /// </summary>
+        public List<FolderLinkData> GetAllFolderLinks()
+        {
+            List<FolderLinkData> folderLinks = new List<FolderLinkData>();
+            foreach (GameData child in Children)
+            {
+                if (child is FolderLinkData)
+                    folderLinks.Add((FolderLinkData)child);
+                // Add all subfolders' children
+                else if (child is FolderData)
+                    folderLinks.AddRange(((FolderData)child).GetAllFolderLinks());
+            }
+            return folderLinks;
+
+        } // end GetAllFolderLinks
 
         /// <summary>
         /// Fix parents that are null when serialized. No idea why this is an issue.<br/>

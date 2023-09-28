@@ -40,7 +40,6 @@
             buttonCreateFolder = new Button();
             buttonAddFiles = new Button();
             textBoxCreateFolder = new TextBox();
-            textBoxDebug = new TextBox();
             SuspendLayout();
             // 
             // labelFilesToBackup
@@ -108,7 +107,7 @@
             buttonAddFolder.Name = "buttonAddFolder";
             buttonAddFolder.Size = new Size(151, 23);
             buttonAddFolder.TabIndex = 18;
-            buttonAddFolder.Text = "Add Contents of Folder";
+            buttonAddFolder.Text = "Add Folder Link";
             buttonAddFolder.UseVisualStyleBackColor = false;
             buttonAddFolder.Click += buttonAddFolder_Click;
             // 
@@ -152,20 +151,11 @@
             textBoxCreateFolder.Size = new Size(151, 23);
             textBoxCreateFolder.TabIndex = 22;
             // 
-            // textBoxDebug
-            // 
-            textBoxDebug.Location = new Point(347, 27);
-            textBoxDebug.Multiline = true;
-            textBoxDebug.Name = "textBoxDebug";
-            textBoxDebug.Size = new Size(311, 287);
-            textBoxDebug.TabIndex = 23;
-            // 
             // FormAddGame
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(670, 326);
-            Controls.Add(textBoxDebug);
+            ClientSize = new Size(346, 326);
             Controls.Add(textBoxCreateFolder);
             Controls.Add(buttonAddFiles);
             Controls.Add(buttonCreateFolder);
@@ -198,6 +188,5 @@
         private Button buttonCreateFolder;
         private Button buttonAddFiles;
         private TextBox textBoxCreateFolder;
-        private TextBox textBoxDebug;
     }
 }
